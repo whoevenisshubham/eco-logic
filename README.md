@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# 🌱 Eco-Logic: Industry-Level Software Energy Profiler
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Eco-Logic Preview](https://github.com/whoevenisshubham/eco-logic/assets/demo-placeholder.png) <!-- Note: Replace with actual screenshot path if available later -->
 
-Currently, two official plugins are available:
+**Eco-Logic** is a high-performance, research-grade software energy profiler dashboard built to make energy consumption a first-class debugging citizen. It features a complete architecture for ingesting high-frequency telemetry data, deep-linking performance spikes back to origin code, and visualising multi-dimensional metrics at scale.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Status: Deployed](https://img.shields.io/badge/Status-Deployed-success?style=for-the-badge)
+![Tech: React 18](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react)
+![Tech: Vite](https://img.shields.io/badge/Vite-7.3-646CFF?style=for-the-badge&logo=vite)
+![Tech: D3.js](https://img.shields.io/badge/D3.js-7.9-F9A03C?style=for-the-badge&logo=d3.js)
 
-## React Compiler
+## 🚀 Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Check out the live deployment here:**  
+👉 **[https://whoevenisshubham.github.io/eco-logic/](https://whoevenisshubham.github.io/eco-logic/)**
 
-## Expanding the ESLint configuration
+## ✨ Core Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **High-Frequency Telemetry Engine**: Simulated ingestion of high-resolution processing data capable of plotting 10,000+ data nodes without UI lag, thanks to Zustand state separation and `ResizeObserver` responsive layouts.
+* **Custom D3.js Visualisations**:
+  * **Energy Flame Graph:** Top-down stack depth vs runtime tracing with dynamic height scaling. 
+  * **5-Axis Complexity Radar:** Multi-metric algorithmic comparison (CPU, DRAM, Cache, GPU, Time Complexity).
+  * **Sunburst Profiler:** Hierarchical, interactive ring charts with deep breadcrumb trailing.
+  * **Time-Series Monitoring:** Sub-millisecond continuous performance plotting.
+  * **Algorithmic Scatter Plots:** Visual correlation of large datasets.
+* **Code Traceability (Deep Linking)**: Integrated **Monaco Editor** that immediately traces visualization spikes back to exact code lines for rapid optimization.
+* **Differential Profiling**: A/B test sorting algorithms (MergeSort vs TimSort) side-by-side with localized metrics.
+* **Enterprise Analysis**: 
+  * Hardware simulations (ARMv8 vs x86) via CICD pipelines.
+  * Cloud impact converter translating Joules to Carbon footprints.
+* **Fully Responsive Grid Layout**: Powered by `react-grid-layout`, allowing highly customized, draggable, and dynamic window pane management.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **Framework:** React 18 (with Vite 7)
+* **Language:** TypeScript
+* **State Management:** Zustand
+* **Visualizations:** D3.js (v7), Recharts
+* **Animations:** Framer Motion
+* **Styling:** Tailwind CSS (Cyber-audit glassmorphic theme)
+* **Code Editor:** `@monaco-editor/react` (configured gracefully to bypass CDN blocking)
+* **Component Primitives:** Radix UI, Lucide React
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🔧 Getting Started
+
+### 1. Installation
+
+Clone the repository and install dependencies using npm:
+
+```bash
+git clone https://github.com/whoevenisshubham/eco-logic.git
+cd eco-logic
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Run Development Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Launch the Vite development server:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+Open `http://localhost:5173` in your browser.
+
+### 3. Build & Deploy
+
+Deploy directly to your `gh-pages` branch using the integrated deployment scripts:
+
+```bash
+npm run deploy
+```
+
+---
+
+*Designed as a research project aiming to sit alongside top-tier observability tools like Datadog and Intel VTune.*
