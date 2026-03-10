@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Root Variables ─────────────────────────────────────────────────── */
+:root {
+  --bg-primary: #020408;
+  --bg-surface: #080f1a;
+  --bg-panel: #0d1928;
+  --border-color: #1a3a5c;
+  --accent: #00d4ff;
+  --accent-dim: #0094b3;
+  --green: #00ff88;
+  --orange: #ff6b35;
+  --purple: #b44fff;
+  --red: #ff3366;
+  --yellow: #ffd700;
+  --text-primary: #e8f4f8;
+  --text-secondary: #7ab8d4;
+  --text-muted: #3a6b8a;
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* ─── Glassmorphism Panels ───────────────────────────────────────────── */
+@layer components {
+  .glass-panel {
+    @apply relative rounded-xl border border-cyber-border/40;
+    background: rgba(8, 15, 26, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(0, 212, 255, 0.06);
+  }
+  
+  .glass-panel-bright {
+    @apply glass-panel;
+    background: rgba(13, 25, 40, 0.9);
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.1), inset 0 1px 0 rgba(0, 212, 255, 0.15);
+  }
+  
+  .cyber-btn {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border;
+    @apply border-cyber-accent/30 text-cyber-accent bg-cyber-accent/10;
+    @apply hover:bg-cyber-accent/20 hover:shadow-glow-accent hover:border-cyber-accent/60;
+    @apply active:scale-95;
+  }
+
+  .cyber-btn-green {
+    @apply cyber-btn;
+    @apply border-cyber-green/30 text-cyber-green bg-cyber-green/10;
+    @apply hover:bg-cyber-green/20 hover:shadow-glow-green hover:border-cyber-green/60;
+  }
+
+  .cyber-btn-orange {
+    @apply cyber-btn;
+    @apply border-cyber-orange/30 text-cyber-orange bg-cyber-orange/10;
+    @apply hover:bg-cyber-orange/20 hover:border-cyber-orange/60;
+  }
+
+  .cyber-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+    @apply border border-cyber-accent/30 text-cyber-accent bg-cyber-accent/10;
+  }
+
+  .energy-low { @apply text-energy-low; }
+  .energy-medium { @apply text-energy-medium; }
+  .energy-high { @apply text-energy-high; }
+  .energy-critical { @apply text-energy-critical; }
+
+  .stat-card {
+    @apply glass-panel p-4 flex flex-col gap-2;
+  }
+
+  .panel-header {
+    @apply px-4 py-3 flex items-center justify-between border-b border-cyber-border/40;
+  }
+
+  .panel-title {
+    @apply text-sm font-semibold text-cyber-accent uppercase tracking-widest;
+  }
+}
+
+/* ─── Scrollbar Styling ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+
+/* ─── React Grid Layout ──────────────────────────────────────────────── */
+.react-grid-layout { position: relative; }
+.react-grid-item { overflow: hidden; }
+.react-grid-item.react-grid-placeholder {
+  background: rgba(0, 212, 255, 0.08) !important;
+  border: 1px dashed rgba(0, 212, 255, 0.3) !important;
+  border-radius: 12px;
+}
+.react-resizable-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.react-grid-item:hover .react-resizable-handle { opacity: 1; }
+.react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  border-radius: 0 0 2px 0;
+}
+
+/* ─── Monaco Editor Override ─────────────────────────────────────────── */
+.monaco-editor { border-radius: 0 0 12px 12px !important; }
+.monaco-editor .margin { background: #080f1a !important; }
+.monaco-editor-container { height: 100%; }
+
+/* ─── D3 Chart Styles ────────────────────────────────────────────────── */
+.d3-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: rgba(8, 15, 26, 0.95);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #e8f4f8;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  max-width: 220px;
+}
+
+/* ─── Loading / Pulse ────────────────────────────────────────────────── */
+.live-indicator {
+  @apply inline-flex items-center gap-1.5;
+}
+.live-dot {
+  @apply w-2 h-2 rounded-full bg-cyber-green animate-pulse;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+}
+
+/* ─── Drag Handle ────────────────────────────────────────────────────── */
+.drag-handle {
+  cursor: grab;
+}
+.drag-handle:active { cursor: grabbing; }
+
+/* ─── Energy Heatmap Code Lines ─────────────────────────────────────── */
+.heatmap-line-critical { background: rgba(255, 51, 102, 0.15) !important; border-left: 3px solid #ff3366 !important; }
+.heatmap-line-high { background: rgba(255, 107, 53, 0.12) !important; border-left: 3px solid #ff6b35 !important; }
+.heatmap-line-medium { background: rgba(255, 215, 0, 0.08) !important; border-left: 3px solid #ffd700 !important; }
+.heatmap-line-low { background: rgba(0, 255, 136, 0.05) !important; border-left: 3px solid #00ff88 !important; }
+
+/* ─── Flame Graph ────────────────────────────────────────────────────── */
+.flame-rect { cursor: pointer; transition: opacity 0.2s; }
+.flame-rect:hover { opacity: 0.85; filter: brightness(1.3); }
