@@ -1,6 +1,5 @@
-// App.tsx — Root component with react-grid-layout draggable dashboard and mode routing
-import React, { useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -17,19 +16,47 @@ import { JouleCloudConverter } from './components/JouleCloudConverter';
 import { ComplexityScatterPlot } from './components/ComplexityScatterPlot';
 import { useTelemetryStore } from './store/useTelemetryStore';
 
-// ─── Error Boundary ───────────────────────────────────────────────────
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { error: Error | null }
-> {
-  constructor(props: any) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  error: Error | null;
+}
+
+interface DashboardLayoutItem {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+interface DashboardGridProps {
+  layout: DashboardLayoutItem[];
+  rowHeight: number;
+  width: number;
+  margin: [number, number];
+  containerPadding: [number, number];
+  draggableHandle: string;
+  isDraggable: boolean;
+  isResizable: boolean;
+  children?: React.ReactNode;
+}
+
+const DashboardGrid = GridLayout as unknown as React.ComponentType<DashboardGridProps>;
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { error: null };
   }
-  static getDerivedStateFromError(error: Error) {
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { error };
   }
-  render() {
+
+  render(): React.ReactNode {
     if (this.state.error) {
       return (
         <div className="h-screen flex items-center justify-center p-8" style={{ background: '#020408', color: '#ff3366', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -45,8 +72,7 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// ─── Layouts ─────────────────────────────────────────────────────────
-const LAYOUTS: Record<string, Array<{ i: string; x: number; y: number; w: number; h: number }>> = {
+const LAYOUTS: Record<string, DashboardLayoutItem[]> = {
   live: [
     { i: 'timeseries', x: 0, y: 0, w: 8, h: 10 },
     { i: 'radar', x: 8, y: 0, w: 4, h: 10 },
@@ -79,7 +105,6 @@ const LAYOUTS: Record<string, Array<{ i: string; x: number; y: number; w: number
   ],
 };
 
-// ─── Panel registry — rendered on-demand ─────────────────────────────
 const PANEL_MAP: Record<string, React.ReactNode> = {
   timeseries: <TimeSeriesEnergyChart />,
   radar: <EnergyComplexityRadar />,
@@ -115,18 +140,44 @@ const CyberBackground: React.FC = () => (
   </div>
 );
 
+const GlobalAnalyzeOverlay: React.FC = () => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.2 }}
+    className="absolute inset-0 z-40 bg-cyber-bg/70 backdrop-blur-sm flex items-center justify-center"
+  >
+    <div className="w-[420px] max-w-[82vw] rounded-xl border border-cyber-accent/30 bg-cyber-surface/80 p-5 shadow-cyber">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-2.5 h-2.5 rounded-full bg-cyber-green animate-pulse" />
+        <span className="text-sm font-semibold text-cyber-accent tracking-wide">Semantic Analysis In Progress</span>
+      </div>
+      <div className="space-y-2">
+        <div className="h-2.5 rounded bg-cyber-panel animate-pulse" />
+        <div className="h-2.5 rounded bg-cyber-panel animate-pulse w-11/12" />
+        <div className="h-2.5 rounded bg-cyber-panel animate-pulse w-9/12" />
+      </div>
+      <p className="mt-3 text-[11px] text-cyber-text-secondary font-mono">
+        Building Semantic Energy Fingerprints from AST + telemetry signals...
+      </p>
+    </div>
+  </motion.div>
+);
+
 const App: React.FC = () => {
-  const { mode } = useTelemetryStore();
-  const layout = LAYOUTS[mode] || LAYOUTS.live;
+  const { mode, isAnalyzing } = useTelemetryStore();
+  const layout = LAYOUTS[mode] ?? LAYOUTS.live;
 
   const [gridWidth, setGridWidth] = React.useState(window.innerWidth);
+
   React.useEffect(() => {
     const handleResize = () => setGridWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const ROW_HEIGHT = Math.max(28, Math.floor((window.innerHeight - 56 - 32) / 23));
+  const rowHeight = Math.max(28, Math.floor((window.innerHeight - 56 - 32) / 23));
 
   return (
     <ErrorBoundary>
@@ -144,11 +195,9 @@ const App: React.FC = () => {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 overflow-auto p-2"
             >
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              <GridLayout
+              <DashboardGrid
                 layout={layout}
-                {...{ cols: 12 } as any}
-                rowHeight={ROW_HEIGHT}
+                rowHeight={rowHeight}
                 width={gridWidth - 16}
                 margin={[8, 8]}
                 containerPadding={[0, 0]}
@@ -159,7 +208,7 @@ const App: React.FC = () => {
                 {layout.map((item) => (
                   <div key={item.i} className="glass-panel overflow-hidden drag-handle">
                     <ErrorBoundary>
-                      {PANEL_MAP[item.i] || (
+                      {PANEL_MAP[item.i] ?? (
                         <div className="h-full flex items-center justify-center text-xs font-mono" style={{ color: '#3a6b8a' }}>
                           {item.i}
                         </div>
@@ -167,26 +216,29 @@ const App: React.FC = () => {
                     </ErrorBoundary>
                   </div>
                 ))}
-              </GridLayout>
+              </DashboardGrid>
             </motion.div>
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {isAnalyzing && <GlobalAnalyzeOverlay />}
           </AnimatePresence>
         </main>
 
-        {/* Status bar */}
         <div
           className="flex-none h-6 flex items-center px-4 gap-4 text-[10px] font-mono border-t border-cyber-border/30"
           style={{ background: 'rgba(4,8,12,0.95)' }}
         >
           <span style={{ color: '#3a6b8a' }}>EcoLogic Research v2.0</span>
           <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Live · Differential · Flame · Sunburst · Scatter · Enterprise</span>
+          <span style={{ color: '#3a6b8a' }}>Live � Differential � Flame � Sunburst � Scatter � Enterprise</span>
           <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Intel i9-14900K · 64GB DDR5</span>
+          <span style={{ color: '#3a6b8a' }}>Intel i9-14900K � 64GB DDR5</span>
           <div className="flex-1" />
           <span style={{ color: 'rgba(0,212,255,0.5)' }}>Deep-Link Traceability</span>
-          <span style={{ color: '#1a3a5c' }}>•</span>
-          <span style={{ color: 'rgba(0,255,136,0.5)' }}>Hardware Breadcrumbs</span>
-          <span style={{ color: '#1a3a5c' }}>•</span>
+          <span style={{ color: '#1a3a5c' }}>�</span>
+          <span style={{ color: 'rgba(0,255,136,0.5)' }}>Semantic Energy Fingerprints</span>
+          <span style={{ color: '#1a3a5c' }}>�</span>
           <span style={{ color: 'rgba(180,79,255,0.5)' }}>Differential Profiling</span>
         </div>
       </div>

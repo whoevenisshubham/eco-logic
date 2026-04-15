@@ -1,11 +1,43 @@
-// useTelemetryStore.ts — Zustand store for high-frequency telemetry state
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { TelemetryPoint } from '../engine/SimulatedDataEngine';
-import { dataEngine } from '../engine/SimulatedDataEngine';
 
 export type Algorithm = 'mergesort' | 'timsort';
 export type ProfilerMode = 'live' | 'differential' | 'flame' | 'sunburst' | 'scatter' | 'enterprise';
+
+// Exact frontend mirror of backend JSON contract.
+export interface SemanticEnergyFingerprintNode {
+    id: string;
+    nodeType: string;
+    line: number;
+    estimatedJoules: number;
+    complexity: string;
+}
+
+// Exact frontend mirror of backend JSON contract.
+export interface SemanticEnergyFingerprintResponse {
+    astTree: SemanticEnergyFingerprintNode[];
+    totalEnergy: number;
+    overallComplexity: string;
+}
+
+export interface EnergyData {
+    totalEnergy: number;
+}
+
+export interface ComplexityMetrics {
+    overallComplexity: string;
+}
+
+export interface TelemetryPoint {
+    timestamp: number;
+    elapsed: number;
+    energy: number;
+    cpuCore: number;
+    dramLatency: number;
+    cacheHitRate: number;
+    lineId: number;
+    functionName: string;
+}
 
 export interface EnergyMapping {
     lineId: number;
@@ -25,26 +57,26 @@ export interface HardwareEvent {
 }
 
 export interface TelemetryState {
-    // Core data
+    sourceCode: string;
+    astTree: SemanticEnergyFingerprintNode[];
+    energyData: EnergyData;
+    complexityMetrics: ComplexityMetrics;
+    isAnalyzing: boolean;
+    analysisError: string | null;
+
     telemetryA: TelemetryPoint[];
     telemetryB: TelemetryPoint[];
     algorithmA: Algorithm;
     algorithmB: Algorithm;
     activeAlgorithm: Algorithm;
-
-    // Line energy mappings for deep-link
     energyMap: Map<number, EnergyMapping>;
     hardwareEvents: HardwareEvent[];
-
-    // UI state
     mode: ProfilerMode;
     isRunning: boolean;
     isStreaming: boolean;
     selectedLineId: number | null;
     selectedTimeWindow: [number, number] | null;
     hoveredFlameNode: string | null;
-
-    // Stats
     totalEnergyA: number;
     totalEnergyB: number;
     peakPowerA: number;
@@ -53,77 +85,90 @@ export interface TelemetryState {
     avgCacheHitB: number;
     joulesDelta: number;
 
-    // Actions
     setMode: (mode: ProfilerMode) => void;
     setAlgorithm: (algo: Algorithm, slot: 'A' | 'B') => void;
+    setSourceCode: (sourceCode: string) => void;
+    analyzeCode: (sourceCode: string) => Promise<void>;
     runProfiler: () => void;
     stopProfiler: () => void;
     selectLine: (lineId: number | null) => void;
     setTimeWindow: (window: [number, number] | null) => void;
     setHoveredFlameNode: (nodeId: string | null) => void;
-    syncTelemetryToCode: (elapsed: number) => number; // returns lineId
+    syncTelemetryToCode: (elapsed: number) => number;
 }
 
-function buildEnergyMap(points: TelemetryPoint[]): { map: Map<number, EnergyMapping>; events: HardwareEvent[] } {
-    const map = new Map<number, EnergyMapping>();
-    const events: HardwareEvent[] = [];
+function getBackendApiBaseUrl(): string {
+    const envUrl = import.meta.env.VITE_PROFILE_API_URL as string | undefined;
+    return envUrl ?? 'http://127.0.0.1:8000';
+}
 
-    for (const pt of points) {
-        const existing = map.get(pt.lineId);
+function mapFingerprintToLegacyTelemetry(astTree: SemanticEnergyFingerprintNode[]): TelemetryPoint[] {
+    const now = Date.now();
+    return astTree.map((node, index) => {
+        const energy = Number(node.estimatedJoules) || 0;
+        const cpuCore = Math.max(1, energy * 8);
+        const dramLatency = Math.max(2, 40 - energy);
+        const cacheHitRate = Math.max(0.1, Math.min(0.99, 1 - (energy / 20)));
+
+        return {
+            timestamp: now + index,
+            elapsed: index * 1.5,
+            energy,
+            cpuCore,
+            dramLatency,
+            cacheHitRate,
+            lineId: node.line,
+            functionName: node.nodeType,
+        };
+    });
+}
+
+function buildEnergyMapFromAst(astTree: SemanticEnergyFingerprintNode[]): Map<number, EnergyMapping> {
+    const map = new Map<number, EnergyMapping>();
+
+    for (const node of astTree) {
+        const existing = map.get(node.line);
         if (!existing) {
-            map.set(pt.lineId, {
-                lineId: pt.lineId,
-                energy: pt.energy,
-                cpuCore: pt.cpuCore,
-                dramLatency: pt.dramLatency,
-                branchMispredict: pt.branchMispredict,
-                cacheHitRate: pt.cacheHitRate,
+            map.set(node.line, {
+                lineId: node.line,
+                energy: node.estimatedJoules,
+                cpuCore: Math.max(1, node.estimatedJoules * 8),
+                dramLatency: Math.max(2, 40 - node.estimatedJoules),
+                branchMispredict: 0,
+                cacheHitRate: Math.max(0.1, Math.min(0.99, 1 - (node.estimatedJoules / 20))),
                 hardwareEvents: [],
             });
-        } else {
-            existing.energy = Math.max(existing.energy, pt.energy);
-            existing.cpuCore = Math.max(existing.cpuCore, pt.cpuCore);
-            existing.dramLatency = Math.max(existing.dramLatency, pt.dramLatency);
-            existing.branchMispredict = Math.max(existing.branchMispredict, pt.branchMispredict);
+            continue;
         }
 
-        // Hardware events
-        if (pt.thermalTemp > 78) {
-            events.push({ type: 'thermal_throttle', severity: pt.thermalTemp > 88 ? 'high' : 'medium', lineId: pt.lineId, description: `Thermal throttling at ${pt.thermalTemp.toFixed(1)}°C` });
-        }
-        if (pt.memoryPressure > 0.75) {
-            events.push({ type: 'memory_pressure', severity: pt.memoryPressure > 0.9 ? 'high' : 'medium', lineId: pt.lineId, description: `Memory pressure: ${(pt.memoryPressure * 100).toFixed(0)}%` });
-        }
-        if (pt.branchMispredict > 0.15) {
-            events.push({ type: 'branch_miss', severity: pt.branchMispredict > 0.25 ? 'high' : 'medium', lineId: pt.lineId, description: `Branch mispredict: ${(pt.branchMispredict * 100).toFixed(1)}%` });
-        }
-        if (pt.cacheHitRate < 0.5) {
-            events.push({ type: 'cache_miss', severity: 'high', lineId: pt.lineId, description: `Cache hit rate: ${(pt.cacheHitRate * 100).toFixed(0)}%` });
-        }
+        existing.energy = Math.max(existing.energy, node.estimatedJoules);
+        existing.cpuCore = Math.max(existing.cpuCore, node.estimatedJoules * 8);
+        existing.dramLatency = Math.min(existing.dramLatency, Math.max(2, 40 - node.estimatedJoules));
     }
 
-    // Deduplicate events
-    const seen = new Set<string>();
-    const deduped = events.filter(e => {
-        const key = `${e.type}-${e.lineId}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-
-    return { map, events: deduped };
+    return map;
 }
 
-function computeStats(points: TelemetryPoint[]) {
-    if (!points.length) return { total: 0, peak: 0, avgCache: 0 };
-    const total = points.reduce((s, p) => s + p.energy, 0);
-    const peak = Math.max(...points.map(p => p.cpuCore));
-    const avgCache = points.reduce((s, p) => s + p.cacheHitRate, 0) / points.length;
+function computeLegacyStats(points: TelemetryPoint[]) {
+    if (!points.length) {
+        return { total: 0, peak: 0, avgCache: 0 };
+    }
+
+    const total = points.reduce((sum, point) => sum + point.energy, 0);
+    const peak = Math.max(...points.map((point) => point.cpuCore));
+    const avgCache = points.reduce((sum, point) => sum + point.cacheHitRate, 0) / points.length;
     return { total, peak, avgCache };
 }
 
 export const useTelemetryStore = create<TelemetryState>()(
     subscribeWithSelector((set, get) => ({
+        sourceCode: '',
+        astTree: [],
+        energyData: { totalEnergy: 0 },
+        complexityMetrics: { overallComplexity: 'O(1)' },
+        isAnalyzing: false,
+        analysisError: null,
+
         telemetryA: [],
         telemetryB: [],
         algorithmA: 'mergesort',
@@ -148,32 +193,70 @@ export const useTelemetryStore = create<TelemetryState>()(
         setMode: (mode) => set({ mode }),
 
         setAlgorithm: (algo, slot) => {
-            if (slot === 'A') set({ algorithmA: algo });
-            else set({ algorithmB: algo });
+            if (slot === 'A') {
+                set({ algorithmA: algo });
+                return;
+            }
+            set({ algorithmB: algo });
+        },
+
+        setSourceCode: (sourceCode) => set({ sourceCode }),
+
+        analyzeCode: async (sourceCode: string) => {
+            set({
+                isAnalyzing: true,
+                analysisError: null,
+                sourceCode,
+            });
+
+            try {
+                const response = await fetch(`${getBackendApiBaseUrl()}/api/profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source_code: sourceCode }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Profile API failed (${response.status}): ${errorText}`);
+                }
+
+                const data = (await response.json()) as SemanticEnergyFingerprintResponse;
+
+                const legacyTelemetry = mapFingerprintToLegacyTelemetry(data.astTree);
+                const legacyStats = computeLegacyStats(legacyTelemetry);
+
+                set({
+                    astTree: data.astTree,
+                    energyData: { totalEnergy: data.totalEnergy },
+                    complexityMetrics: { overallComplexity: data.overallComplexity },
+                    telemetryA: legacyTelemetry,
+                    telemetryB: [],
+                    energyMap: buildEnergyMapFromAst(data.astTree),
+                    hardwareEvents: [],
+                    isRunning: true,
+                    totalEnergyA: data.totalEnergy,
+                    totalEnergyB: 0,
+                    peakPowerA: legacyStats.peak,
+                    peakPowerB: 0,
+                    avgCacheHitA: legacyStats.avgCache,
+                    avgCacheHitB: 0,
+                    joulesDelta: data.totalEnergy,
+                });
+            } catch (error) {
+                const message = error instanceof Error ? error.message : 'Unknown analysis error';
+                set({
+                    analysisError: message,
+                    isRunning: false,
+                });
+            } finally {
+                set({ isAnalyzing: false });
+            }
         },
 
         runProfiler: () => {
-            const { algorithmA, algorithmB } = get();
-            const dataA = dataEngine.generateTimeSeries(2000, algorithmA);
-            const dataB = dataEngine.generateTimeSeries(2000, algorithmB);
-            const { map, events } = buildEnergyMap(dataA);
-            const statsA = computeStats(dataA);
-            const statsB = computeStats(dataB);
-
-            set({
-                telemetryA: dataA,
-                telemetryB: dataB,
-                energyMap: map,
-                hardwareEvents: events,
-                isRunning: true,
-                totalEnergyA: statsA.total,
-                totalEnergyB: statsB.total,
-                peakPowerA: statsA.peak,
-                peakPowerB: statsB.peak,
-                avgCacheHitA: statsA.avgCache,
-                avgCacheHitB: statsB.avgCache,
-                joulesDelta: statsA.total - statsB.total,
-            });
+            const { sourceCode, analyzeCode } = get();
+            void analyzeCode(sourceCode);
         },
 
         stopProfiler: () => set({ isRunning: false }),
@@ -186,8 +269,10 @@ export const useTelemetryStore = create<TelemetryState>()(
 
         syncTelemetryToCode: (elapsed) => {
             const { telemetryA } = get();
-            if (!telemetryA.length) return 1;
-            const point = telemetryA.find(p => p.elapsed >= elapsed) || telemetryA[0];
+            if (!telemetryA.length) {
+                return 1;
+            }
+            const point = telemetryA.find((entry) => entry.elapsed >= elapsed) ?? telemetryA[0];
             return point.lineId;
         },
     }))

@@ -1,156 +1,237 @@
-// ComplexityScatterPlot.tsx — Virtual windowed scatter with 5000+ points @60FPS
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { motion } from 'framer-motion';
 import { useTelemetryStore } from '../store/useTelemetryStore';
-import { dataEngine } from '../engine/SimulatedDataEngine';
 
-const MARGIN = { top: 10, right: 20, bottom: 36, left: 52 };
-const COMPLEXITY_LABELS = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'];
-const FN_COLORS: Record<string, string> = {
-    mergeSort: '#00d4ff', merge: '#00ff88', matrixMultiply: '#ff3366',
-    fibonacciMemo: '#b44fff', insertionSort: '#ffd700', calcMinRun: '#ff6b35',
-};
+const MARGIN = { top: 12, right: 24, bottom: 44, left: 66 };
+const COMPLEXITY_LABELS = ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)', 'O(N^2)', 'O(2^N)'] as const;
+
+type ComplexityLabel = (typeof COMPLEXITY_LABELS)[number];
+
+interface ComplexityPoint {
+    complexity: ComplexityLabel;
+    totalEnergy: number;
+    timestamp: number;
+}
+
+function normalizeComplexity(value: string): ComplexityLabel {
+    const normalized = value.trim() as ComplexityLabel;
+    if (COMPLEXITY_LABELS.includes(normalized)) {
+        return normalized;
+    }
+    return 'O(1)';
+}
 
 export const ComplexityScatterPlot: React.FC = React.memo(() => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
-    const { isRunning } = useTelemetryStore();
 
-    // Memoize the 5000-point dataset — only regenerates when profiler starts
-    const scatterData = useMemo(() => {
-        return isRunning ? dataEngine.generateScatterData(5000) : [];
-    }, [isRunning]);
+    const { isRunning, isAnalyzing, complexityMetrics, energyData } = useTelemetryStore();
+    const [history, setHistory] = useState<ComplexityPoint[]>([]);
 
-    const renderScatter = useCallback(() => {
-        if (!svgRef.current || !containerRef.current || !scatterData.length) return;
+    useEffect(() => {
+        const totalEnergy = energyData.totalEnergy;
+        if (!isRunning || totalEnergy <= 0) {
+            return;
+        }
 
-        const container = containerRef.current;
-        const width = container.clientWidth - MARGIN.left - MARGIN.right;
-        const height = container.clientHeight - MARGIN.top - MARGIN.bottom;
+        const nextPoint: ComplexityPoint = {
+            complexity: normalizeComplexity(complexityMetrics.overallComplexity),
+            totalEnergy,
+            timestamp: Date.now(),
+        };
+
+        setHistory((previous) => {
+            const last = previous[previous.length - 1];
+            if (last && last.complexity === nextPoint.complexity && Math.abs(last.totalEnergy - nextPoint.totalEnergy) < 1e-9) {
+                return previous;
+            }
+            return [...previous.slice(-14), nextPoint];
+        });
+    }, [complexityMetrics.overallComplexity, energyData.totalEnergy, isRunning]);
+
+    const points = useMemo<ComplexityPoint[]>(() => {
+        if (history.length > 0) {
+            return history;
+        }
+
+        if (energyData.totalEnergy <= 0) {
+            return [];
+        }
+
+        return [{
+            complexity: normalizeComplexity(complexityMetrics.overallComplexity),
+            totalEnergy: energyData.totalEnergy,
+            timestamp: Date.now(),
+        }];
+    }, [complexityMetrics.overallComplexity, energyData.totalEnergy, history]);
+
+    const renderChart = useCallback(() => {
+        if (!svgRef.current || !containerRef.current || !points.length) {
+            return;
+        }
+
+        const width = containerRef.current.clientWidth - MARGIN.left - MARGIN.right;
+        const height = containerRef.current.clientHeight - MARGIN.top - MARGIN.bottom;
+
+        if (width <= 0 || height <= 0) {
+            return;
+        }
 
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
-        svg.attr('width', width + MARGIN.left + MARGIN.right).attr('height', height + MARGIN.top + MARGIN.bottom);
+        svg
+            .attr('width', width + MARGIN.left + MARGIN.right)
+            .attr('height', height + MARGIN.top + MARGIN.bottom);
 
         const g = svg.append('g').attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-        // Scales
-        const xScale = d3.scaleLinear().domain([0, 4.2]).range([0, width]);
-        const yScale = d3.scaleLinear().domain([0, d3.max(scatterData, d => d.energy)! * 1.1]).range([height, 0]);
+        const xScale = d3
+            .scalePoint<ComplexityLabel>()
+            .domain(COMPLEXITY_LABELS)
+            .range([0, width])
+            .padding(0.5);
 
-        // Grid
-        g.append('g').call(d3.axisLeft(yScale).ticks(4).tickSize(-width).tickFormat(() => ''))
-            .call(g => g.select('.domain').remove())
-            .call(g => g.selectAll('.tick line').attr('stroke', 'rgba(26,58,92,0.4)').attr('stroke-dasharray', '3,3'));
+        const maxEnergy = Math.max(...points.map((point) => point.totalEnergy), 1);
+        const yScale = d3.scaleLinear().domain([0, maxEnergy * 1.15]).nice().range([height, 0]);
 
-        // Vertical complexity lines
-        [0, 1, 2, 3, 4].forEach((x, i) => {
-            g.append('line').attr('x1', xScale(x)).attr('x2', xScale(x)).attr('y1', 0).attr('y2', height).attr('stroke', 'rgba(26,58,92,0.3)').attr('stroke-dasharray', '4,4');
-            g.append('text').attr('x', xScale(x)).attr('y', height + 22).attr('text-anchor', 'middle').attr('fill', '#3a6b8a').attr('font-size', '9px').attr('font-family', 'JetBrains Mono').text(COMPLEXITY_LABELS[i]);
-        });
+        g.append('g')
+            .call(d3.axisLeft(yScale).ticks(6).tickSize(-width).tickFormat(() => ''))
+            .call((axis) => axis.select('.domain').remove())
+            .call((axis) => axis.selectAll('.tick line').attr('stroke', 'rgba(26,58,92,0.4)').attr('stroke-dasharray', '4,4'));
 
-        // Clip
-        const defs = svg.append('defs');
-        defs.append('clipPath').attr('id', 'scatterClip').append('rect').attr('width', width).attr('height', height);
+        const xAxis = g
+            .append('g')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(xScale));
 
-        // Virtual windowing — only render points in visible area (all of them, but using canvas-like batch update)
-        const chartArea = g.append('g').attr('clip-path', 'url(#scatterClip)');
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#1a3a5c'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#1a3a5c'));
+        xAxis.call((axis) =>
+            axis
+                .selectAll('.tick text')
+                .attr('fill', '#7ab8d4')
+                .attr('font-size', '10px')
+                .attr('font-family', 'JetBrains Mono, monospace')
+        );
 
-        // Batch render with function grouping for perf
-        const byFunction = d3.group(scatterData, d => d.name);
+        const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(6).tickFormat((value) => `${Number(value).toFixed(2)} J`));
+        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#1a3a5c'));
+        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#1a3a5c'));
+        yAxis.call((axis) =>
+            axis
+                .selectAll('.tick text')
+                .attr('fill', '#7ab8d4')
+                .attr('font-size', '10px')
+                .attr('font-family', 'JetBrains Mono, monospace')
+        );
 
-        byFunction.forEach((points, fn) => {
-            chartArea.append('g')
-                .selectAll('circle')
-                .data(points)
-                .join('circle')
-                .attr('cx', d => xScale(d.x))
-                .attr('cy', d => yScale(d.energy))
-                .attr('r', d => Math.max(1.5, Math.log(d.r + 1)))
-                .attr('fill', FN_COLORS[fn] || '#7ab8d4')
-                .attr('fill-opacity', 0.45)
-                .attr('stroke', FN_COLORS[fn] || '#7ab8d4')
-                .attr('stroke-width', 0.3)
-                .attr('stroke-opacity', 0.7);
-        });
+        g.append('text')
+            .attr('x', width / 2)
+            .attr('y', height + 34)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#7ab8d4')
+            .attr('font-size', '10px')
+            .attr('font-family', 'JetBrains Mono, monospace')
+            .text('Overall Complexity');
 
-        // Hover layer (transparent for interaction)
-        chartArea.append('rect')
-            .attr('width', width).attr('height', height).attr('fill', 'none').attr('pointer-events', 'all')
-            .on('mousemove', function (event) {
-                const [mx, my] = d3.pointer(event);
-                const x = xScale.invert(mx);
-                const y = yScale.invert(my);
-                const closest = scatterData.reduce((a, b) => {
-                    const da = Math.hypot(xScale(a.x) - mx, yScale(a.energy) - my);
-                    const db = Math.hypot(xScale(b.x) - mx, yScale(b.energy) - my);
-                    return db < da ? b : a;
-                });
-                const dist = Math.hypot(xScale(closest.x) - mx, yScale(closest.energy) - my);
-                if (dist < 25) {
-                    const tooltip = tooltipRef.current;
-                    if (tooltip) {
-                        const parentRect = containerRef.current!.getBoundingClientRect();
-                        tooltip.style.display = 'block';
-                        tooltip.style.left = `${event.clientX - parentRect.left + 12}px`;
-                        tooltip.style.top = `${event.clientY - parentRect.top - 10}px`;
-                        tooltip.innerHTML = `
-              <div style="color:${FN_COLORS[closest.name] || '#7ab8d4'}" class="font-bold">${closest.name}</div>
-              <div>Energy: <span style="color:#ff6b35">${closest.energy.toFixed(3)}J</span></div>
-              <div>Complexity: <span style="color:#ffd700">${COMPLEXITY_LABELS[Math.round(closest.x)] || 'O(?)'}</span></div>
-            `;
-                    }
-                } else if (tooltipRef.current) tooltipRef.current.style.display = 'none';
+        g.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -height / 2)
+            .attr('y', -46)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#7ab8d4')
+            .attr('font-size', '10px')
+            .attr('font-family', 'JetBrains Mono, monospace')
+            .text('Total Energy (Joules)');
+
+        const newestIndex = points.length - 1;
+
+        g.selectAll<SVGCircleElement, ComplexityPoint>('.complexity-point')
+            .data(points, (point) => point.timestamp)
+            .join('circle')
+            .attr('class', 'complexity-point')
+            .attr('cx', (point) => xScale(point.complexity) ?? 0)
+            .attr('cy', (point) => yScale(point.totalEnergy))
+            .attr('r', (_, index) => (index === newestIndex ? 8 : 5))
+            .attr('fill', (_, index) => (index === newestIndex ? '#00d4ff' : 'rgba(0,212,255,0.45)'))
+            .attr('stroke', '#e8f4f8')
+            .attr('stroke-width', (_, index) => (index === newestIndex ? 1.4 : 0.8))
+            .on('mousemove', (event, point) => {
+                const tooltip = tooltipRef.current;
+                if (!tooltip || !containerRef.current) {
+                    return;
+                }
+
+                const parentRect = containerRef.current.getBoundingClientRect();
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${event.clientX - parentRect.left + 12}px`;
+                tooltip.style.top = `${event.clientY - parentRect.top - 10}px`;
+                tooltip.innerHTML = [
+                    `<div class=\"font-bold text-cyber-accent\">Semantic Energy Fingerprint</div>`,
+                    `<div>Complexity: <span class=\"text-cyber-yellow\">${point.complexity}</span></div>`,
+                    `<div>Total Energy: <span class=\"text-cyber-orange\">${point.totalEnergy.toFixed(4)} J</span></div>`,
+                ].join('');
             })
-            .on('mouseleave', () => { if (tooltipRef.current) tooltipRef.current.style.display = 'none'; });
+            .on('mouseleave', () => {
+                if (tooltipRef.current) {
+                    tooltipRef.current.style.display = 'none';
+                }
+            });
+    }, [points]);
 
-        // Axes
-        const xAxis = g.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale).ticks(5).tickFormat((d, i) => ''));
-        xAxis.call(g => g.select('.domain').attr('stroke', '#1a3a5c'));
-        xAxis.call(g => g.selectAll('.tick line').attr('stroke', '#1a3a5c'));
-
-        const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${+d}J`));
-        yAxis.call(g => g.select('.domain').attr('stroke', '#1a3a5c'));
-        yAxis.call(g => g.selectAll('.tick text').attr('fill', '#7ab8d4').attr('font-size', '10px').attr('font-family', 'JetBrains Mono'));
-
-        // X-axis label
-        g.append('text').attr('x', width / 2).attr('y', height + 34).attr('text-anchor', 'middle').attr('fill', '#7ab8d4').attr('font-size', '10px').text('Time Complexity Class');
-        g.append('text').attr('transform', 'rotate(-90)').attr('x', -height / 2).attr('y', -38).attr('text-anchor', 'middle').attr('fill', '#7ab8d4').attr('font-size', '10px').text('Energy (J)');
-
-        // Legend
-        const lg = g.append('g').attr('transform', `translate(${width - 120}, 4)`);
-        Object.entries(FN_COLORS).forEach(([fn, color], i) => {
-            lg.append('circle').attr('cx', 5).attr('cy', i * 14 + 5).attr('r', 4).attr('fill', color).attr('opacity', 0.8);
-            lg.append('text').attr('x', 13).attr('y', i * 14 + 9).attr('fill', '#7ab8d4').attr('font-size', '9px').attr('font-family', 'JetBrains Mono').text(fn);
-        });
-
-    }, [scatterData]);
-
-    useEffect(() => { renderScatter(); }, [renderScatter]);
     useEffect(() => {
-        const obs = new ResizeObserver(() => renderScatter());
-        if (containerRef.current) obs.observe(containerRef.current);
-        return () => obs.disconnect();
-    }, [renderScatter]);
+        renderChart();
+    }, [renderChart]);
+
+    useEffect(() => {
+        const observer = new ResizeObserver(() => renderChart());
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+        return () => observer.disconnect();
+    }, [renderChart]);
+
+    const hasData = isRunning && energyData.totalEnergy > 0;
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Energy-Complexity Scatter</span>
-                <span className="text-[10px] font-mono text-cyber-text-muted">{scatterData.length.toLocaleString()} points · 60FPS</span>
+                <span className="text-[10px] font-mono text-cyber-text-muted">X: overall Big-O � Y: total Joules</span>
             </div>
+
             <div ref={containerRef} className="flex-1 relative overflow-hidden">
-                {!isRunning ? (
+                {isAnalyzing && (
+                    <div className="absolute inset-0 z-20 bg-cyber-bg/75 backdrop-blur-sm flex items-center justify-center">
+                        <div className="w-2/3 max-w-sm space-y-2">
+                            <div className="h-3 rounded bg-cyber-panel animate-pulse" />
+                            <div className="h-3 rounded bg-cyber-panel animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-cyber-accent">Computing complexity-energy projection...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!hasData ? (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} className="text-cyber-text-muted text-sm font-mono text-center">
-                            <div className="text-2xl mb-2">◉</div>
-                            <div>Run profiler to scatter plot</div>
+                        <motion.div
+                            animate={{ opacity: [0.45, 1, 0.45] }}
+                            transition={{ duration: 1.8, repeat: Infinity }}
+                            className="text-cyber-text-muted text-sm font-mono text-center"
+                        >
+                            <div>Run analysis to plot Big-O vs Joules</div>
                         </motion.div>
                     </div>
-                ) : <svg ref={svgRef} className="w-full h-full" />}
-                <div ref={tooltipRef} className="d3-tooltip" style={{ display: 'none', position: 'absolute' }} />
+                ) : (
+                    <svg ref={svgRef} className="w-full h-full" />
+                )}
+
+                <div
+                    ref={tooltipRef}
+                    className="d3-tooltip z-50 pointer-events-none"
+                    style={{ display: 'none', position: 'absolute' }}
+                />
             </div>
         </div>
     );
