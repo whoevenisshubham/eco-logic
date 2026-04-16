@@ -227,15 +227,15 @@ export const SunburstProfiler: React.FC = () => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Sunburst Profiler</span>
-                <span className="text-[10px] font-mono text-slate-400">AST NodeType {'->'} Line {'->'} Joules</span>
+                <span className="text-[10px] font-mono text-gray-500">AST NodeType {'->'} Line {'->'} Joules</span>
             </div>
 
-            <div className="flex-none px-3 py-1 flex items-center gap-1 text-[10px] font-mono text-slate-300 border-b border-slate-700/30 min-h-[25px]">
+            <div className="flex-none px-3 py-1 flex items-center gap-1 text-xs font-mono text-gray-500 border-b border-gray-50/30 min-h-[25px]">
                 {breadcrumb.length > 0
                     ? breadcrumb.map((name, index) => (
                         <React.Fragment key={`${name}-${index}`}>
-                            {index > 0 && <span className="text-slate-700">{'>'}</span>}
-                            <span className={index === breadcrumb.length - 1 ? 'text-blue-500 font-bold' : ''}>{name}</span>
+                            {index > 0 && <span className="text-gray-50">{'>'}</span>}
+                            <span className={index === breadcrumb.length - 1 ? 'text-indigo-600 font-bold' : ''}>{name}</span>
                         </React.Fragment>
                     ))
                     : <span className="opacity-0">trace</span>}
@@ -245,9 +245,9 @@ export const SunburstProfiler: React.FC = () => {
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">
-                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-800 animate-pulse w-10/12" />
-                            <p className="text-center text-xs font-mono text-blue-500">Compiling AST hierarchy for sunburst...</p>
+                            <div className="h-3 rounded bg-gray-50 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-50 animate-pulse w-10/12" />
+                            <p className="text-center text-xs font-mono text-indigo-600">Compiling AST hierarchy for sunburst...</p>
                         </div>
                     </div>
                 )}
@@ -256,7 +256,7 @@ export const SunburstProfiler: React.FC = () => {
                     <motion.div
                         animate={{ opacity: [0.4, 1, 0.4] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="text-slate-400 text-sm font-mono text-center absolute"
+                        className="text-gray-500 text-sm font-mono text-center absolute"
                     >
                         <div className="text-xs">Run analysis to render the AST energy hierarchy</div>
                     </motion.div>

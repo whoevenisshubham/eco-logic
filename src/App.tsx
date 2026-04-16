@@ -76,8 +76,8 @@ const LAYOUTS: Record<string, DashboardLayoutItem[]> = {
   live: [
     { i: 'timeseries', x: 0, y: 0, w: 8, h: 10 },
     { i: 'radar', x: 8, y: 0, w: 4, h: 10 },
-    { i: 'editor', x: 0, y: 10, w: 8, h: 13 },
-    { i: 'genie', x: 8, y: 10, w: 4, h: 13 },
+    { i: 'editor', x: 0, y: 10, w: 8, h: 15 },
+    { i: 'genie', x: 8, y: 10, w: 4, h: 15 },
   ],
   flame: [
     { i: 'flame', x: 0, y: 0, w: 9, h: 14 },
@@ -142,17 +142,17 @@ const GlobalAnalyzeOverlay: React.FC = () => (
     transition={{ duration: 0.2 }}
     className="absolute inset-0 z-40 bg-white/70 backdrop-blur-sm flex items-center justify-center"
   >
-    <div className="w-[420px] max-w-[82vw] rounded-xl border border-blue-500/30 bg-slate-900/80 p-5 shadow-cyber">
+    <div className="w-[420px] max-w-[82vw] rounded-xl border border-indigo-600/30 bg-gray-50/80 p-5 shadow-cyber">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="text-sm font-semibold text-blue-500 tracking-wide">Semantic Analysis In Progress</span>
+        <span className="text-sm font-semibold text-indigo-600 tracking-wide">Semantic Analysis In Progress</span>
       </div>
       <div className="space-y-2">
-        <div className="h-2.5 rounded bg-slate-800 animate-pulse" />
-        <div className="h-2.5 rounded bg-slate-800 animate-pulse w-11/12" />
-        <div className="h-2.5 rounded bg-slate-800 animate-pulse w-9/12" />
+        <div className="h-2.5 rounded bg-gray-50 animate-pulse" />
+        <div className="h-2.5 rounded bg-gray-50 animate-pulse w-11/12" />
+        <div className="h-2.5 rounded bg-gray-50 animate-pulse w-9/12" />
       </div>
-      <p className="mt-3 text-[11px] text-slate-300 font-mono">
+      <p className="mt-3 text-[11px] text-gray-500 font-mono">
         Building Semantic Energy Fingerprints from AST + telemetry signals...
       </p>
     </div>
@@ -165,13 +165,13 @@ const ErrorNotification: React.FC<{ error: string }> = ({ error }) => (
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: 20 }}
     transition={{ duration: 0.3 }}
-    className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg border border-energy-critical/50 bg-slate-900/95 p-4 shadow-2xl backdrop-blur-sm"
+    className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg border border-energy-critical/50 bg-gray-50/95 p-4 shadow-2xl backdrop-blur-sm"
   >
     <div className="flex items-start gap-3">
       <div className="w-2 h-2 rounded-full bg-energy-critical flex-shrink-0 mt-1" />
       <div>
         <div className="text-xs font-semibold text-energy-critical mb-1">Analysis Error</div>
-        <div className="text-xs text-slate-300 font-mono leading-relaxed">{error}</div>
+        <div className="text-xs text-gray-500 font-mono leading-relaxed">{error}</div>
       </div>
     </div>
   </motion.div>
@@ -211,14 +211,14 @@ const App: React.FC = () => {
                 layout={layout}
                 rowHeight={rowHeight}
                 width={gridWidth - 16}
-                margin={[8, 8]}
+                margin={[16, 16]}
                 containerPadding={[0, 0]}
                 draggableHandle=".drag-handle"
                 isDraggable={true}
                 isResizable={true}
               >
                 {layout.map((item) => (
-                  <div key={item.i} className="glass-panel overflow-hidden drag-handle">
+                  <div key={item.i} className="glass-panel overflow-hidden bg-white">
                     <ErrorBoundary>
                       {PANEL_MAP[item.i] ?? (
                         <div className="h-full flex items-center justify-center text-xs font-mono" style={{ color: '#3a6b8a' }}>
@@ -239,20 +239,19 @@ const App: React.FC = () => {
         </main>
 
         <div
-          className="flex-none h-6 flex items-center px-4 gap-4 text-[10px] font-mono border-t border-slate-700/30"
-          style={{ background: 'rgba(4,8,12,0.95)' }}
+          className="flex-none h-6 flex items-center px-4 gap-4 text-xs font-mono border-t border-gray-200 bg-white"
         >
-          <span style={{ color: '#3a6b8a' }}>EcoLogic Research v2.0</span>
-          <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Live � Differential � Flame � Sunburst � Scatter � Enterprise</span>
-          <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Intel i9-14900K � 64GB DDR5</span>
+          <span className="text-gray-500">EcoLogic Research v2.0</span>
+          <span className="text-gray-300">|</span>
+          <span className="text-gray-500">Live  Differential  Flame  Sunburst  Scatter  Enterprise</span>
+          <span className="text-gray-300">|</span>
+          <span className="text-gray-500">Intel i9-14900K  64GB DDR5</span>
           <div className="flex-1" />
-          <span style={{ color: 'rgba(0,212,255,0.5)' }}>Deep-Link Traceability</span>
-          <span style={{ color: '#1a3a5c' }}>�</span>
-          <span style={{ color: 'rgba(0,255,136,0.5)' }}>Semantic Energy Fingerprints</span>
-          <span style={{ color: '#1a3a5c' }}>�</span>
-          <span style={{ color: 'rgba(180,79,255,0.5)' }}>Differential Profiling</span>
+          <span className="text-indigo-500">Deep-Link Traceability</span>
+          <span className="text-gray-300"></span>
+          <span className="text-emerald-500">Semantic Energy Fingerprints</span>
+          <span className="text-gray-300"></span>
+          <span className="text-purple-500">Differential Profiling</span>
         </div>
       </div>
     </ErrorBoundary>

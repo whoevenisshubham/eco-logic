@@ -20,9 +20,9 @@ export const JouleCloudConverter: React.FC = () => {
             <div className="flex-1 p-4 overflow-auto font-mono text-sm space-y-4">
                 {isRunning ? (
                     <>
-                        <div className="p-3 border border-slate-700/40 rounded-lg bg-slate-900">
-                            <div className="text-slate-400 text-xs mb-1">Deployment Scale Assumption</div>
-                            <div className="text-blue-500 font-bold">1,000,000 executions / day</div>
+                        <div className="p-3 border border-gray-50/40 rounded-lg bg-gray-50">
+                            <div className="text-gray-500 text-xs mb-1">Deployment Scale Assumption</div>
+                            <div className="text-indigo-600 font-bold">1,000,000 executions / day</div>
                         </div>
                         <div className="p-3 border border-orange-500/30 rounded-lg bg-orange-500/10">
                             <div className="text-orange-500/80 text-xs mb-1">Monthly Cloud Energy Cost</div>
@@ -34,7 +34,7 @@ export const JouleCloudConverter: React.FC = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-slate-400 text-center">
+                    <div className="h-full flex items-center justify-center text-xs text-gray-500 text-center">
                         Run analysis to forecast cloud impact
                     </div>
                 )}

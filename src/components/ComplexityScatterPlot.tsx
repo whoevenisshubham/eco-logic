@@ -199,16 +199,16 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Energy-Complexity Scatter</span>
-                <span className="text-[10px] font-mono text-slate-400">X: overall Big-O � Y: total Joules</span>
+                <span className="text-[10px] font-mono text-gray-500">X: overall Big-O � Y: total Joules</span>
             </div>
 
             <div ref={containerRef} className="flex-1 relative overflow-hidden">
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">
-                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-800 animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-blue-500">Computing complexity-energy projection...</p>
+                            <div className="h-3 rounded bg-gray-50 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-50 animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-indigo-600">Computing complexity-energy projection...</p>
                         </div>
                     </div>
                 )}
@@ -218,7 +218,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
                         <motion.div
                             animate={{ opacity: [0.45, 1, 0.45] }}
                             transition={{ duration: 1.8, repeat: Infinity }}
-                            className="text-slate-400 text-sm font-mono text-center"
+                            className="text-gray-500 text-sm font-mono text-center"
                         >
                             <div>Run analysis to plot Big-O vs Joules</div>
                         </motion.div>

@@ -10,7 +10,7 @@ export const DifferentialProfilingView: React.FC = () => {
 
     // Calculate percentage difference vs baseline
     let percentageDiff: number | null = null;
-    let diffColor = 'text-slate-400';
+    let diffColor = 'text-gray-500';
     let diffSign = '';
     
     if (baselineEnergy !== null && baselineEnergy > 0) {
@@ -22,7 +22,7 @@ export const DifferentialProfilingView: React.FC = () => {
         } else if (percentageDiff < 0) {
             diffColor = 'text-emerald-500';
         } else {
-            diffColor = 'text-slate-400';
+            diffColor = 'text-gray-500';
         }
     }
 
@@ -33,7 +33,7 @@ export const DifferentialProfilingView: React.FC = () => {
                 {isRunning && (
                     <button 
                         onClick={handleSetBaseline}
-                        className="text-[10px] px-2 py-1 rounded bg-blue-500 text-white font-bold hover:bg-blue-500/80 transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-indigo-600 text-white font-bold hover:bg-indigo-600/80 transition-colors"
                     >
                         Set as Baseline
                     </button>
@@ -42,42 +42,42 @@ export const DifferentialProfilingView: React.FC = () => {
             <div className="flex-1 p-4 overflow-auto">
                 {isRunning ? (
                     <div className="space-y-4 font-mono text-sm">
-                        <div className="p-4 border border-slate-700/40 rounded-lg bg-slate-900">
-                            <h3 className="text-blue-500 font-bold mb-2">Current Run</h3>
-                            <p className="text-slate-300">
+                        <div className="p-4 border border-gray-50/40 rounded-lg bg-gray-50">
+                            <h3 className="text-indigo-600 font-bold mb-2">Current Run</h3>
+                            <p className="text-gray-500">
                                 Total Energy: <span className="text-orange-500">{totalEnergyA.toFixed(4)} J</span>
                             </p>
-                            <p className="text-slate-300">
+                            <p className="text-gray-500">
                                 Overall Complexity: <span className="text-purple-500">{complexityMetrics.overallComplexity}</span>
                             </p>
                         </div>
                         
-                        <div className={`p-4 border ${baselineEnergy !== null ? 'border-slate-700/40 bg-slate-900' : 'border-slate-700/20 bg-white/50'} rounded-lg`}>
-                            <h3 className={`${baselineEnergy !== null ? 'text-blue-500' : 'text-slate-400'} font-bold mb-2`}>
+                        <div className={`p-4 border ${baselineEnergy !== null ? 'border-gray-50/40 bg-gray-50' : 'border-gray-50/20 bg-white/50'} rounded-lg`}>
+                            <h3 className={`${baselineEnergy !== null ? 'text-indigo-600' : 'text-gray-500'} font-bold mb-2`}>
                                 Baseline Run
                             </h3>
                             
                             {baselineEnergy !== null ? (
                                 <>
-                                    <p className="text-slate-300">
+                                    <p className="text-gray-500">
                                         Saved Energy: <span className="text-orange-500">{baselineEnergy.toFixed(4)} J</span>
                                     </p>
-                                    <p className="mt-2 text-slate-300">
+                                    <p className="mt-2 text-gray-500">
                                         Difference: <span className={`font-bold ${diffColor}`}>
                                             {diffSign}{percentageDiff !== null ? percentageDiff.toFixed(2) : 0}%
                                         </span>
                                     </p>
                                 </>
                             ) : (
-                                <p className="text-slate-400">No baseline set. Click "Set as Baseline" above.</p>
+                                <p className="text-gray-500">No baseline set. Click "Set as Baseline" above.</p>
                             )}
                         </div>
-                        <div className="text-xs text-slate-400 mt-6 leading-relaxed">
+                        <div className="text-xs text-gray-500 mt-6 leading-relaxed">
                             * Note: The History/Baseline tracker evaluates the current static AST compilation against a saved snapshot to analyze energy consumption improvements (or degradations) across code changes.
                         </div>
                     </div>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-slate-400 font-mono">
+                    <div className="h-full flex items-center justify-center text-xs text-gray-500 font-mono">
                         Run analysis to view baseline comparisons
                     </div>
                 )}

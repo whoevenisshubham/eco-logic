@@ -37,13 +37,9 @@ html, body, #root {
 
 /* ─── Panel & UI Components ───────────────────────────────────────────── */
 @layer components {
-  .glass-panel {
-    @apply relative rounded-xl border border-slate-200 bg-white shadow-sm;
-  }
+  .glass-panel { @apply bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col; }
   
-  .glass-panel-bright {
-    @apply glass-panel shadow-md;
-  }
+  .glass-panel-bright { @apply glass-panel; }
   
   .btn {
     @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border;
@@ -189,7 +185,7 @@ html, body, #root {
 }
 .drag-handle:active { cursor: grabbing; }
 
-/* ─── Energy Heatmap Code Lines ─────────────────────────────────────── */
+/* Ensure children can receive exact pointer events but don't steal grab from handle if specified */
 .heatmap-line-critical { background: rgba(239, 68, 68, 0.1) !important; border-left: 3px solid #ef4444 !important; }
 .heatmap-line-high { background: rgba(249, 115, 22, 0.1) !important; border-left: 3px solid #f97316 !important; }
 .heatmap-line-medium { background: rgba(234, 179, 8, 0.1) !important; border-left: 3px solid #eab308 !important; }

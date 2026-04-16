@@ -45,8 +45,8 @@ export const EnergyHeatmapEditor: React.FC = () => {
 
             const ratio = mapping.energy / maxEnergy;
             let className = 'heatmap-line-low';
-            if (ratio > 0.85) className = 'heatmap-line-critical';
-            else if (ratio > 0.6) className = 'heatmap-line-high';
+            if (ratio > 0.85) className = 'bg-rose-50 border-l-4 border-rose-400';
+            else if (ratio > 0.6) className = 'bg-amber-50 border-l-4 border-amber-400';
             else if (ratio > 0.35) className = 'heatmap-line-medium';
 
             decorations.push({
@@ -56,11 +56,11 @@ export const EnergyHeatmapEditor: React.FC = () => {
                     className,
                     glyphMarginClassName: ratio > 0.6 ? 'glyph-energy-high' : 'glyph-energy-low',
                     overviewRuler: {
-                        color: ratio > 0.6 ? '#ff3366' : '#00ff88',
+                        color: ratio > 0.6 ? '#f43f5e' : '#10b981',
                         position: monaco.editor.OverviewRulerLane.Right,
                     },
                     minimap: {
-                        color: ratio > 0.6 ? '#ff3366' : '#ffd700',
+                        color: ratio > 0.6 ? '#f43f5e' : '#f59e0b',
                         position: monaco.editor.MinimapPosition.Inline,
                     },
                 },
@@ -97,41 +97,41 @@ export const EnergyHeatmapEditor: React.FC = () => {
     }, [analyzeCode, sourceCode]);
 
     return (
-        <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
+        <div className="h-full flex flex-col overflow-hidden bg-white">
+            <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3 flex items-center justify-between drag-handle">
                 <div className="flex items-center gap-3">
-                    <span className="panel-title">Energy Heatmap Editor</span>
+                    <span className="font-semibold text-gray-900 text-sm">Energy Heatmap Editor</span>
                     <button
                         type="button"
                         onClick={handleRunProfiling}
                         disabled={isAnalyzing || sourceCode.trim().length === 0}
-                        className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                        className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                     >
-                        {isAnalyzing ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+                        {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
                         {isAnalyzing ? 'Profiling...' : 'Run Semantic Profiling'}
                     </button>
                     {isRunning && (
                         <div className="flex items-center gap-2 text-xs">
                             <span className="w-3 h-1.5 rounded bg-red-500 inline-block" />
-                            <span className="text-slate-600">Critical</span>
+                            <span className="text-gray-500">Critical</span>
                             <span className="w-3 h-1.5 rounded bg-orange-500 inline-block" />
-                            <span className="text-slate-600">High</span>
+                            <span className="text-gray-500">High</span>
                             <span className="w-3 h-1.5 rounded bg-amber-500 inline-block" />
-                            <span className="text-slate-600">Medium</span>
+                            <span className="text-gray-500">Medium</span>
                             <span className="w-3 h-1.5 rounded bg-emerald-500 inline-block" />
-                            <span className="text-slate-600">Low</span>
+                            <span className="text-gray-500">Low</span>
                         </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-slate-500">input.py</span>
+                    <span className="text-xs font-mono text-gray-500">input.py</span>
                     {selectedLineId && (
                         <motion.span
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200 text-blue-700 bg-blue-50"
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border border-indigo-200 text-indigo-700 bg-indigo-50"
                         >
-                            <Zap size={10} />
+                            <Zap size={12} />
                             Line {selectedLineId}
                         </motion.span>
                     )}
@@ -167,8 +167,8 @@ export const EnergyHeatmapEditor: React.FC = () => {
             </div>
 
             {isRunning && energyMap.size > 0 && (
-                <div className="flex-none px-4 py-2 border-t border-slate-200 flex items-center gap-4 text-xs">
-                    <span className="text-slate-500">{energyMap.size} lines profiled</span>
+                <div className="flex-none px-4 py-2 border-t border-gray-100 bg-gray-50 flex items-center gap-4 text-xs">
+                    <span className="text-gray-500 font-medium">{energyMap.size} lines profiled</span>
                 </div>
             )}
         </div>

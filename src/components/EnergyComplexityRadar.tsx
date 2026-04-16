@@ -36,7 +36,7 @@ export const EnergyComplexityRadar: React.FC = () => {
                         </RadarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-slate-400 font-mono">
+                    <div className="h-full flex items-center justify-center text-xs text-gray-500 font-mono">
                         Run analysis to view footprint radar
                     </div>
                 )}

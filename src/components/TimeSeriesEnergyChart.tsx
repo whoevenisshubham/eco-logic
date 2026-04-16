@@ -230,7 +230,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                     `<div>DRAM: <span class=\"text-indigo-600\">${closest.dramLatency.toFixed(1)}ns</span></div>`,
                     `<div>Cache: <span class=\"text-emerald-600\">${(closest.cacheHitRate * 100).toFixed(1)}%</span></div>`,
                     `<div>Line: <span class=\"text-amber-500\">${closest.lineId}</span></div>`,
-                    `<div class=\"text-xs text-slate-500\">L=${closest.nodeIndex.toFixed(0)}</div>`,
+                    `<div class=\"text-xs text-gray-500\">L=${closest.nodeIndex.toFixed(0)}</div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
@@ -294,11 +294,11 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setShowBoth((previous) => !previous)}
-                        className={`text-xs px-2 py-1 rounded border transition-colors ${showBoth ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-slate-700/40 text-slate-300'}`}
+                        className={`text-xs px-2 py-1 rounded border transition-colors ${showBoth ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-gray-50/40 text-gray-500'}`}
                     >
                         Compare
                     </button>
-                    <span className="text-[10px] font-mono text-slate-400">Click spike {'->'} jump to code</span>
+                    <span className="text-[10px] font-mono text-gray-500">Click spike {'->'} jump to code</span>
                 </div>
             </div>
 
@@ -306,9 +306,9 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">
-                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-800 animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-blue-500">Synthesizing time-series energy trace...</p>
+                            <div className="h-3 rounded bg-gray-50 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-50 animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-indigo-600">Synthesizing time-series energy trace...</p>
                         </div>
                     </div>
                 )}
@@ -318,7 +318,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                         <motion.div
                             animate={{ opacity: [0.4, 1, 0.4] }}
                             transition={{ duration: 2, repeat: Infinity }}
-                            className="text-slate-400 text-sm font-mono text-center"
+                            className="text-gray-500 text-sm font-mono text-center"
                         >
                             <div>Run analysis to stream semantic energy data</div>
                         </motion.div>

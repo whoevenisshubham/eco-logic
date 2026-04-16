@@ -228,7 +228,7 @@ export const EnergyFlameGraph: React.FC = () => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Energy Flame Graph</span>
-                <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
                     <span>Width: Joule share</span>
                     <span>|</span>
                     <span>Rows: Big-O class</span>
@@ -239,10 +239,10 @@ export const EnergyFlameGraph: React.FC = () => {
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-md space-y-2">
-                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-800 animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-blue-500">Building semantic energy flame map...</p>
+                            <div className="h-3 rounded bg-gray-50 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-50 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-50 animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-indigo-600">Building semantic energy flame map...</p>
                         </div>
                     </div>
                 )}
@@ -252,9 +252,9 @@ export const EnergyFlameGraph: React.FC = () => {
                         <motion.div
                             animate={{ opacity: [0.45, 1, 0.45] }}
                             transition={{ duration: 1.8, repeat: Infinity }}
-                            className="text-slate-400 text-sm font-mono text-center"
+                            className="text-gray-500 text-sm font-mono text-center"
                         >
-                            <div className="text-blue-500">Run analysis to reveal AST energy hotspots</div>
+                            <div className="text-indigo-600">Run analysis to reveal AST energy hotspots</div>
                         </motion.div>
                     </div>
                 ) : (

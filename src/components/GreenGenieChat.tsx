@@ -161,15 +161,15 @@ export const GreenGenieChat: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
+            <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3 flex items-center justify-between drag-handle">
                 <div className="flex items-center gap-2">
                     <Sparkles size={14} className="text-amber-500" style={{ filter: 'drop-shadow(0 0 2px #f59e0b)' }} />
                     <span className="panel-title">Green-Genie AI</span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500">Semantic Energy Refactor Assistant</span>
+                <span className="text-[10px] font-mono text-gray-500">Semantic Energy Refactor Assistant</span>
             </div>
 
-            <div className="flex-none px-3 py-2 border-b border-slate-200 text-[10px] font-mono text-slate-500">
+            <div className="flex-none px-3 py-2 border-b border-gray-900 text-xs font-mono text-gray-500">
                 {topHotspots.length > 0
                     ? `Top hotspots: ${topHotspots.map((node) => `L${node.line}`).join(', ')}`
                     : 'No hotspots yet. Run analysis first.'}
@@ -179,9 +179,9 @@ export const GreenGenieChat: React.FC = () => {
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/80 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-md space-y-2">
-                            <div className="h-3 rounded bg-slate-100 animate-pulse" />
-                            <div className="h-3 rounded bg-slate-100 animate-pulse w-11/12" />
-                            <p className="text-center text-xs font-mono text-blue-600">Extracting top AST energy hotspots...</p>
+                            <div className="h-3 rounded bg-gray-900 animate-pulse" />
+                            <div className="h-3 rounded bg-gray-900 animate-pulse w-11/12" />
+                            <p className="text-center text-xs font-mono text-indigo-600">Extracting top AST energy hotspots...</p>
                         </div>
                     </div>
                 )}
@@ -204,8 +204,8 @@ export const GreenGenieChat: React.FC = () => {
 
                         <div
                             className={`max-w-[88%] rounded-xl px-3 py-2 text-xs leading-5 whitespace-pre-wrap ${message.role === 'user'
-                                ? 'bg-blue-50 border border-blue-200 text-slate-800 text-right'
-                                : 'bg-white border border-slate-200 text-slate-700'
+                                ? 'bg-blue-50 border border-blue-200 text-gray-50 text-right'
+                                : 'bg-white border border-gray-900 text-gray-50'
                                 }`}
                         >
                             {message.content || (message.role === 'assistant' ? '...' : '')}
@@ -227,9 +227,9 @@ export const GreenGenieChat: React.FC = () => {
                             >
                                 <Sparkles size={10} className="text-amber-500" />
                             </div>
-                            <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-slate-200">
-                                <Loader2 size={12} className="text-blue-600 animate-spin" />
-                                <span className="text-xs text-slate-500 font-mono">Streaming optimization guidance...</span>
+                            <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-gray-900">
+                                <Loader2 size={12} className="text-indigo-600 animate-spin" />
+                                <span className="text-xs text-gray-500 font-mono">Streaming optimization guidance...</span>
                             </div>
                         </motion.div>
                     )}
@@ -247,7 +247,7 @@ export const GreenGenieChat: React.FC = () => {
                     <button
                         key={prompt}
                         onClick={() => setInput(prompt)}
-                        className="text-[10px] px-2 py-1 rounded-full border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-colors"
+                        className="text-[10px] px-2 py-1 rounded-full border border-gray-900 text-gray-500 hover:text-indigo-600 hover:border-blue-300 transition-colors"
                     >
                         {prompt}
                     </button>
@@ -255,7 +255,7 @@ export const GreenGenieChat: React.FC = () => {
             </div>
 
             <div className="flex-none px-3 pb-3">
-                <div className="flex gap-2 p-1 rounded-xl border border-slate-200" style={{ background: '#ffffff' }}>
+                <div className="flex gap-2 p-1 rounded-xl border border-gray-900" style={{ background: '#ffffff' }}>
                     <input
                         value={input}
                         onChange={(event) => setInput(event.target.value)}
@@ -266,7 +266,7 @@ export const GreenGenieChat: React.FC = () => {
                         }}
                         placeholder={canSend ? 'Ask Green-Genie for joule-saving refactors...' : 'Run analysis and load source code first...'}
                         disabled={!canSend || isStreaming}
-                        className="flex-1 bg-transparent text-xs text-slate-800 placeholder-slate-400 px-2 outline-none font-mono"
+                        className="flex-1 bg-transparent text-xs text-gray-50 placeholder-gray-500 px-2 outline-none font-mono"
                     />
                     <button
                         onClick={() => {
