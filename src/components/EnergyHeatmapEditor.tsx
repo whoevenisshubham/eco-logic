@@ -5,21 +5,6 @@ import { motion } from 'framer-motion';
 import { useTelemetryStore } from '../store/useTelemetryStore';
 import { Database, GitBranch, Loader2, Thermometer, Zap } from 'lucide-react';
 
-// Configure Monaco to use CDN for workers (most reliable method)
-if (typeof window !== 'undefined' && !window.MonacoEnvironment) {
-  window.MonacoEnvironment = {
-    getWorkerUrl: (_moduleId: string, label: string) => {
-      // Use jsDelivr CDN for Monaco worker files - most reliable for dev and production
-      const cdnUrl = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs';
-      if (label === 'json') return `${cdnUrl}/language/json/json.worker.js`;
-      if (label === 'css' || label === 'scss' || label === 'less') return `${cdnUrl}/language/css/css.worker.js`;
-      if (label === 'html' || label === 'handlebars' || label === 'razor') return `${cdnUrl}/language/html/html.worker.js`;
-      if (label === 'typescript' || label === 'javascript') return `${cdnUrl}/language/typescript/ts.worker.js`;
-      return `${cdnUrl}/editor/editor.worker.js`;
-    }
-  };
-}
-
 const HARDWARE_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
     thermal_throttle: { icon: <Thermometer size={10} />, color: '#ff3366' },
     memory_pressure: { icon: <Database size={10} />, color: '#b44fff' },
