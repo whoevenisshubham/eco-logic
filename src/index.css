@@ -202,35 +202,40 @@ html, body, #root {
 
 /* ─── Print Styles ───────────────────────────────────────────────────── */
 @media print {
-  nav, .cyber-background, .pointer-events-none, .genie-panel {
+  nav, .cyber-background, .pointer-events-none, .green-genie-chat, button, .genie-panel {
     display: none !important;
   }
 
-  body, html, #root, .h-screen {
+  body, html, #root, .h-screen, .app-container {
     height: auto !important;
     overflow: visible !important;
     background: #ffffff !important;
     color: #0f172a !important;
   }
 
-  .react-grid-layout {
+  .react-grid-layout, .grid {
     display: block !important;
     height: auto !important;
     width: 100% !important;
     transform: none !important;
   }
   
-  .react-grid-item {
+  .react-grid-item, .glass-panel {
     position: relative !important;
     transform: none !important;
     width: 100% !important;
-    height: 450px !important;
-    margin-bottom: 2rem !important;
+    height: auto !important;
+    margin-bottom: 24px !important;
+    break-inside: avoid !important;
     page-break-inside: avoid;
     box-shadow: none !important;
     border: 1px solid #e2e8f0 !important;
     background: #ffffff !important;
     overflow: visible !important;
+  }
+  
+  * {
+    color: black !important;
   }
 
   .glass-panel {

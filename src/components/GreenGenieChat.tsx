@@ -87,13 +87,19 @@ const ChatMessageContent: React.FC<{ content: string; role: 'user' | 'assistant'
         <div className="whitespace-pre-wrap">
             {parts.map((part, index) => {
                 if (part.startsWith('```') && part.endsWith('```')) {
-                    const match = part.match(/```(\w*)\n([\s\S]*?)```/);
-                    const code = match ? match[2].trim() : part.slice(3, -3).trim();
+                    const match = part.match(/```(?:python)?\s*([\s\S]*?)```/);
+                    const code = match ? match[1].trim() : part.replace(/```/g, '').trim();
                     
                     return (
                         <div key={index} className="relative my-3 group bg-slate-800 text-slate-50 p-4 rounded-xl overflow-x-auto font-mono text-[13px] leading-relaxed shadow-sm">
                             <button
-                                onClick={() => onApplyCode(code)}
+                                onClick={() => {
+                                    if (match && match[1]) {
+                                        onApplyCode(match[1].trim());
+                                    } else {
+                                        onApplyCode(part.replace(/```python|```/g, '').trim());
+                                    }
+                                }}
                                 title="Apply to Editor"
                                 className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-md shadow-sm font-sans font-medium"
                             >

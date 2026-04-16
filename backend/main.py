@@ -234,8 +234,12 @@ def profile_source_code(payload: ProfileRequest) -> ProfileResponse:
     try:
         syntax_tree = ast.parse(payload.source_code)
     except SyntaxError as exc:
-        detail = f"Syntax error on line {exc.lineno}: {exc.msg}"
-        raise HTTPException(status_code=422, detail=detail) from exc
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Syntax Error on line {exc.lineno}: {exc.msg}. Please fix your Python code and try again."
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred during AST parsing.") from exc
 
     analyzer = SemanticEnergyAnalyzer()
     return analyzer.analyze(syntax_tree)

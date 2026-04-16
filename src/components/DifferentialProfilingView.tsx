@@ -12,10 +12,17 @@ export const DifferentialProfilingView: React.FC = () => {
     let isReduction = false;
     let isDegradation = false;
     
-    if (baselineEnergy !== null && baselineEnergy > 0) {
-        percentageDiff = ((totalEnergyA - baselineEnergy) / baselineEnergy) * 100;
-        isReduction = percentageDiff < 0;
-        isDegradation = percentageDiff > 0;
+    if (baselineEnergy !== null) {
+        if (baselineEnergy > 0) {
+            percentageDiff = ((totalEnergyA - baselineEnergy) / baselineEnergy) * 100;
+            isReduction = percentageDiff < 0;
+            isDegradation = percentageDiff > 0;
+        } else if (baselineEnergy === 0 && totalEnergyA > 0) {
+            percentageDiff = 100;
+            isDegradation = true;
+        } else {
+            percentageDiff = 0;
+        }
     }
 
     return (
