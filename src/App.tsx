@@ -74,34 +74,34 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
 const LAYOUTS: Record<string, DashboardLayoutItem[]> = {
   live: [
-    { i: 'timeseries', x: 0, y: 0, w: 8, h: 10 },
-    { i: 'radar', x: 8, y: 0, w: 4, h: 10 },
-    { i: 'editor', x: 0, y: 10, w: 8, h: 15 },
-    { i: 'genie', x: 8, y: 10, w: 4, h: 15 },
+    { i: 'timeseries', x: 0, y: 0, w: 8, h: 5 },
+    { i: 'radar', x: 8, y: 0, w: 4, h: 5 },
+    { i: 'editor', x: 0, y: 5, w: 8, h: 9 },
+    { i: 'genie', x: 8, y: 5, w: 4, h: 9 },
   ],
   flame: [
-    { i: 'flame', x: 0, y: 0, w: 9, h: 14 },
-    { i: 'scatter', x: 9, y: 0, w: 3, h: 14 },
-    { i: 'timeseries', x: 0, y: 14, w: 12, h: 9 },
+    { i: 'flame', x: 0, y: 0, w: 9, h: 9 },
+    { i: 'scatter', x: 9, y: 0, w: 3, h: 9 },
+    { i: 'timeseries', x: 0, y: 9, w: 12, h: 5 },
   ],
   differential: [
-    { i: 'diff', x: 0, y: 0, w: 12, h: 23 },
+    { i: 'diff', x: 0, y: 0, w: 12, h: 14 },
   ],
   sunburst: [
-    { i: 'sunburst', x: 0, y: 0, w: 5, h: 14 },
-    { i: 'scatter', x: 5, y: 0, w: 7, h: 14 },
-    { i: 'radar', x: 0, y: 14, w: 5, h: 9 },
-    { i: 'timeseries', x: 5, y: 14, w: 7, h: 9 },
+    { i: 'sunburst', x: 0, y: 0, w: 5, h: 9 },
+    { i: 'scatter', x: 5, y: 0, w: 7, h: 9 },
+    { i: 'radar', x: 0, y: 9, w: 5, h: 5 },
+    { i: 'timeseries', x: 5, y: 9, w: 7, h: 5 },
   ],
   scatter: [
-    { i: 'scatter', x: 0, y: 0, w: 8, h: 16 },
-    { i: 'radar', x: 8, y: 0, w: 4, h: 16 },
-    { i: 'timeseries', x: 0, y: 16, w: 12, h: 7 },
+    { i: 'scatter', x: 0, y: 0, w: 8, h: 9 },
+    { i: 'radar', x: 8, y: 0, w: 4, h: 9 },
+    { i: 'timeseries', x: 0, y: 9, w: 12, h: 5 },
   ],
   enterprise: [
-    { i: 'cicd', x: 0, y: 0, w: 4, h: 23 },
-    { i: 'cloud', x: 4, y: 0, w: 4, h: 23 },
-    { i: 'genie', x: 8, y: 0, w: 4, h: 23 },
+    { i: 'cicd', x: 0, y: 0, w: 4, h: 14 },
+    { i: 'cloud', x: 4, y: 0, w: 4, h: 14 },
+    { i: 'genie', x: 8, y: 0, w: 4, h: 14 },
   ],
 };
 
@@ -189,7 +189,9 @@ const App: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const rowHeight = Math.max(28, Math.floor((window.innerHeight - 56 - 32) / 23));
+  // Compute a row height that perfectly scales 14 rows across the available screen real-estate
+  // Window Height minus ~220px of total top/bottom paddings and margins, divided by 14
+  const rowHeight = Math.max(30, Math.floor((window.innerHeight - 220) / 14));
 
   return (
     <ErrorBoundary>
@@ -205,13 +207,13 @@ const App: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 overflow-auto p-4 md:p-6 lg:p-8"
+              className="absolute inset-0 overflow-auto p-4 md:p-5 lg:p-6"
             >
               <DashboardGrid
                 layout={layout}
                 rowHeight={rowHeight}
                 width={gridWidth - 32}
-                margin={[24, 24]}
+                margin={[20, 20]}
                 containerPadding={[0, 0]}
                 draggableHandle=".drag-handle"
                 isDraggable={true}
