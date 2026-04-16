@@ -106,8 +106,8 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(xScale));
 
-        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
-        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#e2e8f0'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0'));
         xAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
@@ -117,8 +117,8 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
         );
 
         const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(6).tickFormat((value) => `${Number(value).toFixed(2)} J`));
-        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
-        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
+        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#e2e8f0'));
+        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0'));
         yAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
@@ -155,8 +155,8 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('cx', (point) => xScale(point.complexity) ?? 0)
             .attr('cy', (point) => yScale(point.totalEnergy))
             .attr('r', (_, index) => (index === newestIndex ? 8 : 5))
-            .attr('fill', (_, index) => (index === newestIndex ? '#3b82f6' : 'rgba(59,130,246,0.4)'))
-            .attr('stroke', '#ffffff')
+            .attr('fill', (_, index) => (index === newestIndex ? '#6366f1' : 'rgba(59,130,246,0.4)'))
+            .attr('stroke', '#fffffffff')
             .attr('stroke-width', (_, index) => (index === newestIndex ? 1.4 : 0.8))
             .on('mousemove', (event, point) => {
                 const tooltip = tooltipRef.current;

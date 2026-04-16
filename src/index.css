@@ -37,9 +37,9 @@ html, body, #root {
 
 /* ─── Panel & UI Components ───────────────────────────────────────────── */
 @layer components {
-  .glass-panel { @apply bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col; }
+  .glass-panel { @apply bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col; }
   
-  .glass-panel-bright { @apply glass-panel; }
+  .glass-panel-bright { @apply bg-white backdrop-blur-lg border border-indigo-100 shadow-md rounded-xl overflow-hidden flex flex-col; }
   
   .btn {
     @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border;

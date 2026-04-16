@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { motion } from 'framer-motion';
 import { useTelemetryStore, type SemanticEnergyFingerprintNode } from '../store/useTelemetryStore';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#f97316', '#8b5cf6', '#ef4444', '#0ea5e9', '#059669'];
+const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#f97316', '#0ea5e9', '#f43f5e', '#0ea5e9', '#059669'];
 
 interface SunburstDatum {
     name: string;
@@ -141,7 +141,7 @@ export const SunburstProfiler: React.FC = () => {
                 return colorScale(topLevel.data.name);
             })
             .attr('fill-opacity', (datum) => Math.max(0.25, 1 - datum.depth * 0.18))
-            .attr('stroke', '#ffffff')
+            .attr('stroke', '#fffffffff')
             .attr('stroke-width', 1.2)
             .style('cursor', 'pointer')
             .on('mousemove', (event, datum) => {

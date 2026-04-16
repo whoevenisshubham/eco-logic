@@ -15,18 +15,18 @@ export const NavBar: React.FC = () => {
     ];
 
     return (
-        <nav className="flex-none h-14 border-b border-gray-200/40 flex items-center justify-between px-4 bg-white/50 backdrop-blur-md z-10">
+        <nav className="flex-none h-14 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm px-6 flex items-center justify-between z-10">
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                     <Zap className="text-indigo-600" size={20} />
-                    <span className="font-bold text-lg tracking-wider text-white">Eco<span className="text-indigo-600">-Logic</span></span>
+                    <span className="font-bold text-lg tracking-wider text-slate-800">Eco<span className="text-indigo-600">-Logic</span></span>
                 </div>
-                <div className="flex items-center gap-1 bg-white/50 p-1 rounded-lg border border-gray-200/30">
+                <div className="flex items-center gap-1 bg-white/50 p-1 rounded-lg border border-slate-200">
                     {modes.map(m => (
                         <button 
                             key={m.id} 
                             onClick={() => setMode(m.id)} 
-                            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-2 transition-all ${mode === m.id ? 'bg-indigo-600/20 text-indigo-600 border border-indigo-600/30 shadow-[0_0_10px_rgba(0,212,255,0.2)]' : 'text-gray-600 hover:text-white hover:bg-white'}`}
+                            className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 transition-all ${mode === m.id ? 'bg-white shadow-sm border border-slate-200 text-indigo-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
                         >
                             {m.icon} {m.label}
                         </button>

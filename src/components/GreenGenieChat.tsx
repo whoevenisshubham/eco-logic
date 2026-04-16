@@ -166,10 +166,10 @@ export const GreenGenieChat: React.FC = () => {
                     <Sparkles size={14} className="text-amber-500" style={{ filter: 'drop-shadow(0 0 2px #f59e0b)' }} />
                     <span className="panel-title">Green-Genie AI</span>
                 </div>
-                <span className="text-[10px] font-mono text-gray-500">Semantic Energy Refactor Assistant</span>
+                <span className="text-[10px] font-mono text-slate-500">Semantic Energy Refactor Assistant</span>
             </div>
 
-            <div className="flex-none px-3 py-2 border-b border-gray-900 text-xs font-mono text-gray-500">
+            <div className="flex-none px-3 py-2 border-b border-slate-200 text-xs font-mono text-slate-500">
                 {topHotspots.length > 0
                     ? `Top hotspots: ${topHotspots.map((node) => `L${node.line}`).join(', ')}`
                     : 'No hotspots yet. Run analysis first.'}
@@ -204,8 +204,8 @@ export const GreenGenieChat: React.FC = () => {
 
                         <div
                             className={`max-w-[88%] rounded-xl px-3 py-2 text-xs leading-5 whitespace-pre-wrap ${message.role === 'user'
-                                ? 'bg-blue-50 border border-blue-200 text-gray-50 text-right'
-                                : 'bg-white border border-gray-900 text-gray-50'
+                                ? 'bg-indigo-50 text-indigo-900 rounded-2xl rounded-tr-sm shadow-sm text-right border-0'
+                                : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm shadow-sm'
                                 }`}
                         >
                             {message.content || (message.role === 'assistant' ? '...' : '')}
@@ -227,9 +227,9 @@ export const GreenGenieChat: React.FC = () => {
                             >
                                 <Sparkles size={10} className="text-amber-500" />
                             </div>
-                            <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-gray-900">
+                            <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-slate-200">
                                 <Loader2 size={12} className="text-indigo-600 animate-spin" />
-                                <span className="text-xs text-gray-500 font-mono">Streaming optimization guidance...</span>
+                                <span className="text-xs text-slate-500 font-mono">Streaming optimization guidance...</span>
                             </div>
                         </motion.div>
                     )}
@@ -247,7 +247,7 @@ export const GreenGenieChat: React.FC = () => {
                     <button
                         key={prompt}
                         onClick={() => setInput(prompt)}
-                        className="text-[10px] px-2 py-1 rounded-full border border-gray-900 text-gray-500 hover:text-indigo-600 hover:border-blue-300 transition-colors"
+                        className="text-[10px] px-2 py-1 rounded-full border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-blue-300 transition-colors"
                     >
                         {prompt}
                     </button>
@@ -255,7 +255,7 @@ export const GreenGenieChat: React.FC = () => {
             </div>
 
             <div className="flex-none px-3 pb-3">
-                <div className="flex gap-2 p-1 rounded-xl border border-gray-900" style={{ background: '#ffffff' }}>
+                <div className="flex gap-2 p-1 rounded-xl border border-slate-200" style={{ background: '#ffffff' }}>
                     <input
                         value={input}
                         onChange={(event) => setInput(event.target.value)}

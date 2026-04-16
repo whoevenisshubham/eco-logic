@@ -82,8 +82,8 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .attr('x2', 0)
             .attr('y2', height);
 
-        gradientA.append('stop').attr('offset', '0%').attr('stop-color', '#3b82f6').attr('stop-opacity', 0.3);
-        gradientA.append('stop').attr('offset', '100%').attr('stop-color', '#3b82f6').attr('stop-opacity', 0.01);
+        gradientA.append('stop').attr('offset', '0%').attr('stop-color', '#6366f1').attr('stop-opacity', 0.3);
+        gradientA.append('stop').attr('offset', '100%').attr('stop-color', '#6366f1').attr('stop-opacity', 0.01);
 
         const gradientB = defs
             .append('linearGradient')
@@ -123,7 +123,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .append('path')
             .datum(dataA)
             .attr('fill', 'none')
-            .attr('stroke', '#3b82f6')
+            .attr('stroke', '#6366f1')
             .attr('stroke-width', 1.5)
             .attr('d', lineGenerator)
             .attr('filter', 'drop-shadow(0 0 4px rgba(59,130,246,0.4))');
@@ -149,17 +149,27 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .attr('cx', (point) => xScale(point.nodeIndex))
             .attr('cy', (point) => yScale(point.energy))
             .attr('r', 3)
-            .attr('fill', '#ef4444')
+            .attr('fill', '#f43f5e')
             .attr('opacity', 0.9)
             .attr('filter', 'drop-shadow(0 0 6px rgba(239,68,68,0.5))');
 
         const xAxis = g
             .append('g')
             .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom(xScale).ticks(6).tickFormat((value) => `L${Number(value).toFixed(0)}`));
+            .call(d3.axisBottom(xScale).ticks(6).tickFormat((value) => `N${Number(value).toFixed(0)}`));
 
-        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
-        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
+        // Add AST Node Sequence label to X-axis
+        svg.append('text')
+            .attr('x', width / 2 + MARGIN.left)
+            .attr('y', height + MARGIN.top + MARGIN.bottom - 4)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#64748b')
+            .attr('font-size', '10px')
+            .attr('font-family', 'JetBrains Mono, monospace')
+            .text('AST Node Sequence');
+
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#e2e8f0'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0'));
         xAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
@@ -169,8 +179,8 @@ export const TimeSeriesEnergyChart: React.FC = () => {
         );
 
         const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat((value) => `${Number(value)}J`));
-        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
-        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
+        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#e2e8f0'));
+        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0'));
         yAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
@@ -230,7 +240,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                     `<div>DRAM: <span class=\"text-indigo-600\">${closest.dramLatency.toFixed(1)}ns</span></div>`,
                     `<div>Cache: <span class=\"text-emerald-600\">${(closest.cacheHitRate * 100).toFixed(1)}%</span></div>`,
                     `<div>Line: <span class=\"text-amber-500\">${closest.lineId}</span></div>`,
-                    `<div class=\"text-xs text-gray-500\">L=${closest.nodeIndex.toFixed(0)}</div>`,
+                    `<div class=\"text-xs text-gray-500\">Node: ${closest.nodeIndex.toFixed(0)}</div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
@@ -264,7 +274,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
         g.append('g').call(brush);
 
         const legend = g.append('g').attr('transform', `translate(${width - 150}, 4)`);
-        legend.append('line').attr('x1', 0).attr('x2', 20).attr('stroke', '#3b82f6').attr('stroke-width', 2).attr('y1', 6).attr('y2', 6);
+        legend.append('line').attr('x1', 0).attr('x2', 20).attr('stroke', '#6366f1').attr('stroke-width', 2).attr('y1', 6).attr('y2', 6);
         legend.append('text').attr('x', 24).attr('y', 10).attr('fill', '#64748b').attr('font-size', '10px').text('Primary');
 
         if (showBoth && dataB.length > 0) {
@@ -290,7 +300,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
-                <span className="panel-title">Energy Time-Series</span>
+                <span className="panel-title">AST Node Sequence Energy</span>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setShowBoth((previous) => !previous)}

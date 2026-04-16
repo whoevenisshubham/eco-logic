@@ -113,7 +113,7 @@ export const EnergyFlameGraph: React.FC = () => {
         const energyColor = d3
             .scaleSequential<number, string>()
             .domain([0, maxEnergy])
-            .interpolator(d3.interpolateRgbBasis(['#10b981', '#eab308', '#f97316', '#ef4444']));
+            .interpolator(d3.interpolateRgbBasis(['#10b981', '#eab308', '#f97316', '#f43f5e']));
 
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
@@ -186,8 +186,8 @@ export const EnergyFlameGraph: React.FC = () => {
             .attr('transform', `translate(0,${effectiveHeight + 2})`)
             .call(d3.axisBottom(xScale).ticks(6).tickFormat((tick) => `${Math.round(Number(tick) * 100)}%`));
 
-        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
-        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#e2e8f0'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0'));
         xAxis.call((axis) =>
             axis
                 .selectAll('.tick text')

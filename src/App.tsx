@@ -218,7 +218,7 @@ const App: React.FC = () => {
                 isResizable={true}
               >
                 {layout.map((item) => (
-                  <div key={item.i} className="glass-panel overflow-hidden bg-white">
+                  <div key={item.i} className="glass-panel">
                     <ErrorBoundary>
                       {PANEL_MAP[item.i] ?? (
                         <div className="h-full flex items-center justify-center text-xs font-mono" style={{ color: '#3a6b8a' }}>
@@ -239,13 +239,13 @@ const App: React.FC = () => {
         </main>
 
         <div
-          className="flex-none h-6 flex items-center px-4 gap-4 text-xs font-mono border-t border-gray-200 bg-white"
+          className="flex-none h-6 flex items-center px-4 gap-4 text-xs font-mono border-t border-slate-200 bg-white"
         >
-          <span className="text-gray-500">EcoLogic Research v2.0</span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Live  Differential  Flame  Sunburst  Scatter  Enterprise</span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Intel i9-14900K  64GB DDR5</span>
+          <span className="text-slate-500">EcoLogic Research v2.0</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-500">Live  Differential  Flame  Sunburst  Scatter  Enterprise</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-500">Intel i9-14900K  64GB DDR5</span>
           <div className="flex-1" />
           <span className="text-indigo-500">Deep-Link Traceability</span>
           <span className="text-gray-300"></span>

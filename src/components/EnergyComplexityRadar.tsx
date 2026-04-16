@@ -7,11 +7,11 @@ export const EnergyComplexityRadar: React.FC = () => {
 
     // Derive realistic mock metrics based on actual energy data for the radar chart
     const radarData = [
-        { subject: 'CPU Pressure', A: Math.min(100, peakPowerA * 10), fullMark: 100 },
+        { subject: 'AST Depth', A: Math.min(100, isRunning ? 20 + peakPowerA * 2 : 0), fullMark: 100 },
+        { subject: 'Loop Pressure', A: Math.min(100, isRunning ? 10 + totalEnergyA * 2 : 0), fullMark: 100 },
         { subject: 'Memory Ops', A: Math.min(100, totalEnergyA * 5), fullMark: 100 },
-        { subject: 'Branch Misses', A: isRunning ? 30 : 0, fullMark: 100 },
-        { subject: 'Cache Misses', A: isRunning ? 45 : 0, fullMark: 100 },
-        { subject: 'Thermal Throttle', A: isRunning ? 15 : 0, fullMark: 100 },
+        { subject: 'Function Calls', A: Math.min(100, isRunning ? 30 + peakPowerA : 0), fullMark: 100 },
+        { subject: 'Total Joules', A: Math.min(100, totalEnergyA * 10), fullMark: 100 },
     ];
 
     return (
@@ -28,10 +28,10 @@ export const EnergyComplexityRadar: React.FC = () => {
                             <PolarGrid stroke="#e2e8f0" />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }} />
                             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                            <Radar name="Primary Execution" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
+                            <Radar name="Primary Execution" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} />
                             <Tooltip 
-                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }} 
-                                itemStyle={{ color: '#3b82f6' }} 
+                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', color: '#334155', padding: '12px' }} 
+                                itemStyle={{ color: '#6366f1' }} 
                             />
                         </RadarChart>
                     </ResponsiveContainer>
