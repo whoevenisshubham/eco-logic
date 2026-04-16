@@ -30,9 +30,6 @@ export interface ComplexityMetrics {
 export interface TelemetryPoint {
     nodeSequenceIndex: number;
     energy: number;
-    cpuCore: number;
-    dramLatency: number;
-    cacheHitRate: number;
     lineId: number;
     functionName: string;
 }
@@ -40,10 +37,6 @@ export interface TelemetryPoint {
 export interface EnergyMapping {
     lineId: number;
     energy: number;
-    cpuCore: number;
-    dramLatency: number;
-    branchMispredict: number;
-    cacheHitRate: number;
 }
 
 export interface TelemetryState {
@@ -65,10 +58,6 @@ export interface TelemetryState {
     hoveredFlameNode: string | null;
     totalEnergyA: number;
     totalEnergyB: number;
-    peakPowerA: number;
-    peakPowerB: number;
-    avgCacheHitA: number;
-    avgCacheHitB: number;
     joulesDelta: number;
     baselineEnergy: number | null;
 
@@ -92,16 +81,10 @@ function getBackendApiBaseUrl(): string {
 function mapFingerprintToLegacyTelemetry(astTree: SemanticEnergyFingerprintNode[]): TelemetryPoint[] {
     return astTree.map((node, index) => {
         const energy = Number(node.estimatedJoules) || 0;
-        const cpuCore = Math.max(1, energy * 8);
-        const dramLatency = Math.max(2, 40 - energy);
-        const cacheHitRate = Math.max(0.1, Math.min(0.99, 1 - (energy / 20)));
 
         return {
             nodeSequenceIndex: index,
             energy,
-            cpuCore,
-            dramLatency,
-            cacheHitRate,
             lineId: node.line,
             functionName: node.nodeType,
         };
@@ -117,17 +100,11 @@ function buildEnergyMapFromAst(astTree: SemanticEnergyFingerprintNode[]): Map<nu
             map.set(node.line, {
                 lineId: node.line,
                 energy: node.estimatedJoules,
-                cpuCore: Math.max(1, node.estimatedJoules * 8),
-                dramLatency: Math.max(2, 40 - node.estimatedJoules),
-                branchMispredict: 0,
-                cacheHitRate: Math.max(0.1, Math.min(0.99, 1 - (node.estimatedJoules / 20))),
             });
             continue;
         }
 
         existing.energy = Math.max(existing.energy, node.estimatedJoules);
-        existing.cpuCore = Math.max(existing.cpuCore, node.estimatedJoules * 8);
-        existing.dramLatency = Math.min(existing.dramLatency, Math.max(2, 40 - node.estimatedJoules));
     }
 
     return map;
@@ -135,13 +112,11 @@ function buildEnergyMapFromAst(astTree: SemanticEnergyFingerprintNode[]): Map<nu
 
 function computeLegacyStats(points: TelemetryPoint[]) {
     if (!points.length) {
-        return { total: 0, peak: 0, avgCache: 0 };
+        return { total: 0 };
     }
 
     const total = points.reduce((sum, point) => sum + point.energy, 0);
-    const peak = Math.max(...points.map((point) => point.cpuCore));
-    const avgCache = points.reduce((sum, point) => sum + point.cacheHitRate, 0) / points.length;
-    return { total, peak, avgCache };
+    return { total };
 }
 
 const DEFAULT_SOURCE_CODE = `def fibonacci(n):
@@ -186,10 +161,6 @@ export const useTelemetryStore = create<TelemetryState>()(
         hoveredFlameNode: null,
         totalEnergyA: 0,
         totalEnergyB: 0,
-        peakPowerA: 0,
-        peakPowerB: 0,
-        avgCacheHitA: 0,
-        avgCacheHitB: 0,
         joulesDelta: 0,
         baselineEnergy: null,
 
@@ -233,10 +204,6 @@ export const useTelemetryStore = create<TelemetryState>()(
                     isRunning: true,
                     totalEnergyA: data.totalEnergy,
                     totalEnergyB: 0,
-                    peakPowerA: legacyStats.peak,
-                    peakPowerB: 0,
-                    avgCacheHitA: legacyStats.avgCache,
-                    avgCacheHitB: 0,
                     joulesDelta: data.totalEnergy,
                 });
             } catch (error) {

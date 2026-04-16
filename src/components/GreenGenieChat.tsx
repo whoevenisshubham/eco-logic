@@ -91,11 +91,11 @@ const ChatMessageContent: React.FC<{ content: string; role: 'user' | 'assistant'
                     const code = match ? match[2].trim() : part.slice(3, -3).trim();
                     
                     return (
-                        <div key={index} className="relative my-3 group bg-slate-800 text-slate-50 p-3 rounded-lg overflow-x-auto font-mono text-[13px] leading-relaxed shadow-sm">
+                        <div key={index} className="relative my-3 group bg-slate-800 text-slate-50 p-4 rounded-xl overflow-x-auto font-mono text-[13px] leading-relaxed shadow-sm">
                             <button
                                 onClick={() => onApplyCode(code)}
                                 title="Apply to Editor"
-                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded shadow-sm font-sans font-medium"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-md shadow-sm font-sans font-medium"
                             >
                                 Apply to Editor
                             </button>

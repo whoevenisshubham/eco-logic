@@ -91,16 +91,16 @@ html, body, #root {
 
 /* ─── Monaco Decorations ─────────────────────────────────────────────── */
 .heatmap-line-low {
-  background: rgba(16, 185, 129, 0.1);
+  @apply bg-emerald-50 border-l-4 border-emerald-400;
 }
 .heatmap-line-medium {
-  background: rgba(245, 158, 11, 0.1);
+  @apply bg-amber-50 border-l-4 border-amber-400;
 }
 .heatmap-line-high {
-  background: rgba(249, 115, 22, 0.1);
+  @apply bg-orange-50 border-l-4 border-orange-400;
 }
 .heatmap-line-critical {
-  background: rgba(239, 68, 68, 0.15);
+  @apply bg-rose-50 border-l-4 border-rose-400;
 }
 
 .glyph-energy-high {
@@ -224,7 +224,7 @@ html, body, #root {
     position: relative !important;
     transform: none !important;
     width: 100% !important;
-    height: auto !important;
+    height: 450px !important;
     margin-bottom: 2rem !important;
     page-break-inside: avoid;
     box-shadow: none !important;
@@ -255,10 +255,6 @@ html, body, #root {
 .drag-handle:active { cursor: grabbing; }
 
 /* Ensure children can receive exact pointer events but don't steal grab from handle if specified */
-.heatmap-line-critical { background: rgba(239, 68, 68, 0.1) !important; border-left: 3px solid #ef4444 !important; }
-.heatmap-line-high { background: rgba(249, 115, 22, 0.1) !important; border-left: 3px solid #f97316 !important; }
-.heatmap-line-medium { background: rgba(234, 179, 8, 0.1) !important; border-left: 3px solid #eab308 !important; }
-.heatmap-line-low { background: rgba(16, 185, 129, 0.05) !important; border-left: 3px solid #10b981 !important; }
 
 /* ─── Flame Graph ────────────────────────────────────────────────────── */
 .flame-rect { cursor: pointer; transition: opacity 0.2s; }

@@ -77,18 +77,18 @@ export const DifferentialProfilingView: React.FC = () => {
                                         <div className="text-right flex flex-col items-end">
                                            <div className="text-[11px] text-slate-500 font-medium mb-1.5">Energy Delta</div>
                                            {isReduction && (
-                                               <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md text-[13px] font-bold shadow-sm">
-                                                  ⬇ {Math.abs(percentageDiff).toFixed(2)}%
+                                               <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-md text-[13px] font-bold shadow-sm">
+                                                  ⬇ {Math.abs(percentageDiff).toFixed(2)}% Energy Reduction
                                                </span>
                                            )}
                                            {isDegradation && (
-                                               <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-md text-[13px] font-bold shadow-sm">
-                                                  ⬆ {Math.abs(percentageDiff).toFixed(2)}%
+                                               <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-rose-200 px-2.5 py-1 rounded-md text-[13px] font-bold shadow-sm">
+                                                  ⬆ {Math.abs(percentageDiff).toFixed(2)}% Energy Increase
                                                </span>
                                            )}
                                            {!isReduction && !isDegradation && (
                                                <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-md text-[13px] font-bold shadow-sm">
-                                                  0.00%
+                                                  0.00% No Change
                                                </span>
                                            )}
                                         </div>

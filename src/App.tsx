@@ -199,7 +199,7 @@ const App: React.FC = () => {
         <CyberBackground />
         <NavBar />
 
-        <main className="flex-1 relative overflow-hidden" style={{ background: '#f8fafc' }}>
+        <main className="flex-1 relative overflow-hidden print:overflow-visible print:h-auto print:static" style={{ background: '#f8fafc' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={mode}
@@ -207,7 +207,7 @@ const App: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 overflow-auto p-4 md:p-5 lg:p-6"
+              className="absolute inset-0 overflow-auto p-4 md:p-5 lg:p-6 print:static print:inset-auto print:h-auto print:overflow-visible"
             >
               <DashboardGrid
                 layout={layout}

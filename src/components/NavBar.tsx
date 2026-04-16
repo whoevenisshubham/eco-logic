@@ -3,7 +3,7 @@ import { Activity, Play, Square, Zap, GitBranch, Cloud, Cpu, Flame, Target, Down
 import { useTelemetryStore, type ProfilerMode } from '../store/useTelemetryStore';
 
 export const NavBar: React.FC = () => {
-    const { mode, setMode, isRunning, isAnalyzing, runProfiler, stopProfiler, totalEnergyA, peakPowerA, avgCacheHitA } = useTelemetryStore();
+    const { mode, setMode, isRunning, isAnalyzing, runProfiler, stopProfiler, totalEnergyA } = useTelemetryStore();
 
     const modes: { id: ProfilerMode; label: string; icon: React.ReactNode }[] = [
         { id: 'live', label: 'Live Profiler', icon: <Activity size={14} /> },
@@ -37,8 +37,6 @@ export const NavBar: React.FC = () => {
                 {isRunning && (
                     <div className="flex items-center gap-6 mr-4 text-sm font-medium">
                         <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Total Energy</span><span className="text-orange-500">{totalEnergyA.toFixed(2)} J</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Peak Power</span><span className="text-rose-500">{peakPowerA.toFixed(1)} W</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Avg Cache Hit</span><span className="text-emerald-500">{(avgCacheHitA * 100).toFixed(1)}%</span></div>
                     </div>
                 )}
                 {isRunning ? (
@@ -47,11 +45,11 @@ export const NavBar: React.FC = () => {
                     </button>
                 ) : (
                     <>
-                        <button onClick={() => window.print()} className="border border-slate-200 text-slate-700 hover:bg-slate-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                        <button onClick={() => window.print()} className="border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
                             <Download size={14} /> Export Report
                         </button>
                         <button onClick={runProfiler} disabled={isAnalyzing} className="flex items-center gap-2.5 bg-indigo-600 border border-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 disabled:bg-indigo-400 disabled:border-indigo-400 transition-all shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
-                            <Play size={16} fill="currentColor" /> {isAnalyzing ? 'Analyzing...' : 'Run Profiler'}
+                            <Play size={16} fill="currentColor" /> {isAnalyzing ? 'Analyzing...' : 'Run Semantic Profiling'}
                         </button>
                     </>
                 )}
