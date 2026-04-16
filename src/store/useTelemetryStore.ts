@@ -160,9 +160,31 @@ function computeLegacyStats(points: TelemetryPoint[]) {
     return { total, peak, avgCache };
 }
 
+const DEFAULT_SOURCE_CODE = `def fibonacci(n):
+    """Compute nth Fibonacci number - demonstrates exponential complexity."""
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+def linear_search(arr, target):
+    """Linear search - O(n) complexity."""
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1
+
+def bubble_sort(arr):
+    """Bubble sort - O(n²) complexity."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr`;
+
 export const useTelemetryStore = create<TelemetryState>()(
     subscribeWithSelector((set, get) => ({
-        sourceCode: '',
+        sourceCode: DEFAULT_SOURCE_CODE,
         astTree: [],
         energyData: { totalEnergy: 0 },
         complexityMetrics: { overallComplexity: 'O(1)' },
