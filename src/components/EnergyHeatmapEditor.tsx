@@ -5,15 +5,16 @@ import { motion } from 'framer-motion';
 import { useTelemetryStore } from '../store/useTelemetryStore';
 import { Database, GitBranch, Loader2, Thermometer, Zap } from 'lucide-react';
 
-// Configure Monaco to use CDN
+// Configure Monaco to use local public files or CDN fallback
 if (typeof window !== 'undefined' && !window.MonacoEnvironment) {
   window.MonacoEnvironment = {
     getWorkerUrl: (_moduleId: string, label: string) => {
-      if (label === 'json') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/json/json.worker.js';
-      if (label === 'css' || label === 'scss' || label === 'less') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/css/css.worker.js';
-      if (label === 'html' || label === 'handlebars' || label === 'razor') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/html/html.worker.js';
-      if (label === 'typescript' || label === 'javascript') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/typescript/ts.worker.js';
-      return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/editor/editor.worker.js';
+      const baseUrl = import.meta.env.DEV ? '/eco-logic/monaco-editor/vs' : '/eco-logic/monaco-editor/vs';
+      if (label === 'json') return `${baseUrl}/language/json/json.worker.js`;
+      if (label === 'css' || label === 'scss' || label === 'less') return `${baseUrl}/language/css/css.worker.js`;
+      if (label === 'html' || label === 'handlebars' || label === 'razor') return `${baseUrl}/language/html/html.worker.js`;
+      if (label === 'typescript' || label === 'javascript') return `${baseUrl}/language/typescript/ts.worker.js`;
+      return `${baseUrl}/editor/editor.worker.js`;
     }
   };
 }
