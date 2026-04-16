@@ -49,10 +49,12 @@ export const EnergyHeatmapEditor: React.FC = () => {
             else if (ratio > 0.6) className = 'bg-amber-50 border-l-4 border-amber-400';
             else if (ratio > 0.35) className = 'heatmap-line-medium';
 
+            const maxColumn = editor.getModel()?.getLineMaxColumn(lineId) || 1;
+
             decorations.push({
-                range: new monaco.Range(lineId, 1, lineId, 1),
+                range: new monaco.Range(lineId, 1, lineId, maxColumn),
                 options: {
-                    isWholeLine: true,
+                    isWholeLine: false,
                     className,
                     glyphMarginClassName: ratio > 0.6 ? 'glyph-energy-high' : 'glyph-energy-low',
                     overviewRuler: {
