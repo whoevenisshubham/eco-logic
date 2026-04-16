@@ -28,7 +28,7 @@ export interface ComplexityMetrics {
 }
 
 export interface TelemetryPoint {
-    nodeIndex: number;
+    nodeSequenceIndex: number;
     energy: number;
     cpuCore: number;
     dramLatency: number;
@@ -97,7 +97,7 @@ function mapFingerprintToLegacyTelemetry(astTree: SemanticEnergyFingerprintNode[
         const cacheHitRate = Math.max(0.1, Math.min(0.99, 1 - (energy / 20)));
 
         return {
-            nodeIndex: index,
+            nodeSequenceIndex: index,
             energy,
             cpuCore,
             dramLatency,
@@ -263,12 +263,12 @@ export const useTelemetryStore = create<TelemetryState>()(
 
         setHoveredFlameNode: (nodeId) => set({ hoveredFlameNode: nodeId }),
 
-        syncTelemetryToCode: (nodeIndex) => {
+        syncTelemetryToCode: (nodeSequenceIndex) => {
             const { telemetryA } = get();
             if (!telemetryA.length) {
                 return 1;
             }
-            const point = telemetryA.find((entry) => entry.nodeIndex >= nodeIndex) ?? telemetryA[0];
+            const point = telemetryA.find((entry) => entry.nodeSequenceIndex >= nodeSequenceIndex) ?? telemetryA[0];
             return point.lineId;
         },
     }))

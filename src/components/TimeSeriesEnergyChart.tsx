@@ -47,7 +47,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
         const dataB = downsampleTelemetry(telemetryB, 800);
         const allData = showBoth && dataB.length > 0 ? [...dataA, ...dataB] : dataA;
 
-        const xExtent = d3.extent(allData, (point) => point.nodeIndex);
+        const xExtent = d3.extent(allData, (point) => point.nodeSequenceIndex);
         const yMax = d3.max(allData, (point) => point.energy) ?? 1;
 
         if (xExtent[0] === undefined || xExtent[1] === undefined) {
@@ -107,13 +107,13 @@ export const TimeSeriesEnergyChart: React.FC = () => {
 
         const lineGenerator = d3
             .line<TelemetryPoint>()
-            .x((point) => xScale(point.nodeIndex))
+            .x((point) => xScale(point.nodeSequenceIndex))
             .y((point) => yScale(point.energy))
             .curve(d3.curveCatmullRom.alpha(0.5));
 
         const areaGenerator = d3
             .area<TelemetryPoint>()
-            .x((point) => xScale(point.nodeIndex))
+            .x((point) => xScale(point.nodeSequenceIndex))
             .y0(height)
             .y1((point) => yScale(point.energy))
             .curve(d3.curveCatmullRom.alpha(0.5));
@@ -146,7 +146,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .selectAll('.spike')
             .data(spikes)
             .join('circle')
-            .attr('cx', (point) => xScale(point.nodeIndex))
+            .attr('cx', (point) => xScale(point.nodeSequenceIndex))
             .attr('cy', (point) => yScale(point.energy))
             .attr('r', 3)
             .attr('fill', '#f43f5e')
@@ -217,7 +217,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 const nodeIndex = xScale.invert(mouseX);
 
                 const closest = dataA.reduce((best, point) => (
-                    Math.abs(point.nodeIndex - nodeIndex) < Math.abs(best.nodeIndex - nodeIndex) ? point : best
+                    Math.abs(point.nodeSequenceIndex - nodeIndex) < Math.abs(best.nodeSequenceIndex - nodeIndex) ? point : best
                 ));
 
                 crosshairV.attr('x1', mouseX).attr('x2', mouseX).style('opacity', 1);
@@ -234,10 +234,8 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 tooltip.style.left = `${event.clientX - parentRect.left}px`;
                 tooltip.style.top = `${event.clientY - parentRect.top}px`;
                 tooltip.innerHTML = [
-                    `<div class=\"tooltip-title\"><span>${closest.functionName}</span> <span class=\"text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeIndex.toFixed(0)}</span></div>`,
+                    `<div class=\"tooltip-title\"><span>${closest.functionName}</span> <span class=\"text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeSequenceIndex.toFixed(0)}</span></div>`,
                     `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Energy</span> <span class=\"text-indigo-600 font-bold\">${closest.energy.toFixed(3)}J</span></div>`,
-                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">CPU Pwr</span> <span class=\"text-rose-500\">${closest.cpuCore.toFixed(1)}W</span></div>`,
-                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Cache Hit</span> <span class=\"text-emerald-500\">${(closest.cacheHitRate * 100).toFixed(1)}%</span></div>`,
                     `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Src Line</span> <span class=\"text-amber-600\">${closest.lineId}</span></div>`,
                 ].join('');
             })
@@ -252,7 +250,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 const [mouseX] = d3.pointer(event);
                 const nodeIndex = xScale.invert(mouseX);
                 const closest = dataA.reduce((best, point) => (
-                    Math.abs(point.nodeIndex - nodeIndex) < Math.abs(best.nodeIndex - nodeIndex) ? point : best
+                    Math.abs(point.nodeSequenceIndex - nodeIndex) < Math.abs(best.nodeSequenceIndex - nodeIndex) ? point : best
                 ));
                 selectLine(closest.lineId);
             });

@@ -9,8 +9,7 @@ export const EnergyComplexityRadar: React.FC = () => {
     const radarData = [
         { subject: 'AST Depth', A: Math.min(100, isRunning ? 20 + peakPowerA * 2 : 0), fullMark: 100 },
         { subject: 'Loop Pressure', A: Math.min(100, isRunning ? 10 + totalEnergyA * 2 : 0), fullMark: 100 },
-        { subject: 'Memory Ops', A: Math.min(100, totalEnergyA * 5), fullMark: 100 },
-        { subject: 'Function Calls', A: Math.min(100, isRunning ? 30 + peakPowerA : 0), fullMark: 100 },
+        { subject: 'Memory Ops Proxy', A: Math.min(100, totalEnergyA * 5), fullMark: 100 },
         { subject: 'Total Joules', A: Math.min(100, totalEnergyA * 10), fullMark: 100 },
     ];
 
