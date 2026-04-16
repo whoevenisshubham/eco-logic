@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { motion } from 'framer-motion';
 import { useTelemetryStore, type SemanticEnergyFingerprintNode } from '../store/useTelemetryStore';
 
-const COLORS = ['#00d4ff', '#00ff88', '#ffd700', '#ff6b35', '#b44fff', '#ff3366', '#4fc3f7', '#00b35f'];
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#f97316', '#8b5cf6', '#ef4444', '#0ea5e9', '#059669'];
 
 interface SunburstDatum {
     name: string;
@@ -141,7 +141,7 @@ export const SunburstProfiler: React.FC = () => {
                 return colorScale(topLevel.data.name);
             })
             .attr('fill-opacity', (datum) => Math.max(0.25, 1 - datum.depth * 0.18))
-            .attr('stroke', 'rgba(8,15,26,0.82)')
+            .attr('stroke', '#ffffff')
             .attr('stroke-width', 1.2)
             .style('cursor', 'pointer')
             .on('mousemove', (event, datum) => {
@@ -158,10 +158,10 @@ export const SunburstProfiler: React.FC = () => {
                 tooltip.style.left = `${event.clientX - localRect.left + 14}px`;
                 tooltip.style.top = `${event.clientY - localRect.top - 14}px`;
                 tooltip.innerHTML = [
-                    `<div class=\"font-bold text-cyber-accent\">${datum.data.name}</div>`,
-                    `<div>Energy: <span class=\"text-cyber-orange\">${value.toFixed(4)}J</span></div>`,
-                    `<div>Share: <span class=\"text-cyber-yellow\">${ratio.toFixed(1)}%</span></div>`,
-                    `<div>Depth: <span class=\"text-cyber-green\">${datum.depth}</span></div>`,
+                    `<div class=\"font-bold text-blue-700\">${datum.data.name}</div>`,
+                    `<div>Energy: <span class=\"text-orange-500\">${value.toFixed(4)}J</span></div>`,
+                    `<div>Share: <span class=\"text-emerald-600\">${ratio.toFixed(1)}%</span></div>`,
+                    `<div>Depth: <span class=\"text-indigo-600\">${datum.depth}</span></div>`,
                 ].join('');
 
                 const trail = datum
@@ -195,7 +195,7 @@ export const SunburstProfiler: React.FC = () => {
             .attr('dominant-baseline', 'middle')
             .attr('font-size', '10px')
             .attr('font-family', 'JetBrains Mono, monospace')
-            .attr('fill', 'rgba(235,245,255,0.95)')
+            .attr('fill', '#1e293b')
             .attr('pointer-events', 'none')
             .text((datum) => datum.data.name);
 
@@ -205,7 +205,7 @@ export const SunburstProfiler: React.FC = () => {
             .attr('dominant-baseline', 'middle')
             .attr('font-size', '12px')
             .attr('font-family', 'JetBrains Mono, monospace')
-            .attr('fill', '#7ab8d4')
+            .attr('fill', '#64748b')
             .text('AST Energy');
     }, [hierarchyData, selectLine]);
 
@@ -227,15 +227,15 @@ export const SunburstProfiler: React.FC = () => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Sunburst Profiler</span>
-                <span className="text-[10px] font-mono text-cyber-text-muted">AST NodeType {'->'} Line {'->'} Joules</span>
+                <span className="text-[10px] font-mono text-slate-400">AST NodeType {'->'} Line {'->'} Joules</span>
             </div>
 
-            <div className="flex-none px-3 py-1 flex items-center gap-1 text-[10px] font-mono text-cyber-text-secondary border-b border-cyber-border/30 min-h-[25px]">
+            <div className="flex-none px-3 py-1 flex items-center gap-1 text-[10px] font-mono text-slate-300 border-b border-slate-700/30 min-h-[25px]">
                 {breadcrumb.length > 0
                     ? breadcrumb.map((name, index) => (
                         <React.Fragment key={`${name}-${index}`}>
-                            {index > 0 && <span className="text-cyber-border">{'>'}</span>}
-                            <span className={index === breadcrumb.length - 1 ? 'text-cyber-accent font-bold' : ''}>{name}</span>
+                            {index > 0 && <span className="text-slate-700">{'>'}</span>}
+                            <span className={index === breadcrumb.length - 1 ? 'text-blue-500 font-bold' : ''}>{name}</span>
                         </React.Fragment>
                     ))
                     : <span className="opacity-0">trace</span>}
@@ -243,11 +243,11 @@ export const SunburstProfiler: React.FC = () => {
 
             <div ref={containerRef} className="flex-1 relative flex items-center justify-center overflow-hidden">
                 {isAnalyzing && (
-                    <div className="absolute inset-0 z-20 bg-cyber-bg/75 backdrop-blur-sm flex items-center justify-center">
+                    <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse" />
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse w-10/12" />
-                            <p className="text-center text-xs font-mono text-cyber-accent">Compiling AST hierarchy for sunburst...</p>
+                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
+                            <div className="h-3 rounded bg-slate-800 animate-pulse w-10/12" />
+                            <p className="text-center text-xs font-mono text-blue-500">Compiling AST hierarchy for sunburst...</p>
                         </div>
                     </div>
                 )}
@@ -256,7 +256,7 @@ export const SunburstProfiler: React.FC = () => {
                     <motion.div
                         animate={{ opacity: [0.4, 1, 0.4] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="text-cyber-text-muted text-sm font-mono text-center absolute"
+                        className="text-slate-400 text-sm font-mono text-center absolute"
                     >
                         <div className="text-xs">Run analysis to render the AST energy hierarchy</div>
                     </motion.div>
@@ -276,3 +276,4 @@ export const SunburstProfiler: React.FC = () => {
         </div>
     );
 };
+

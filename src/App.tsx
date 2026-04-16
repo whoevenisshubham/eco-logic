@@ -59,7 +59,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   render(): React.ReactNode {
     if (this.state.error) {
       return (
-        <div className="h-screen flex items-center justify-center p-8" style={{ background: '#020408', color: '#ff3366', fontFamily: 'JetBrains Mono, monospace' }}>
+        <div className="h-screen flex items-center justify-center p-8" style={{ background: '#f8fafc', color: '#ef4444', fontFamily: 'JetBrains Mono, monospace' }}>
           <div>
             <div className="text-lg font-bold mb-2">Runtime Error</div>
             <pre className="text-xs opacity-80 max-w-2xl overflow-auto">{this.state.error.message}</pre>
@@ -123,20 +123,14 @@ const CyberBackground: React.FC = () => (
     <div
       className="absolute inset-0"
       style={{
-        backgroundImage: 'linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
       }}
     />
-    <div className="absolute top-0 left-0 w-96 h-96 rounded-full opacity-20"
-      style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
-    <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-15"
-      style={{ background: 'radial-gradient(circle, rgba(0,255,136,0.15) 0%, transparent 70%)', transform: 'translate(50%,50%)' }} />
-    <motion.div
-      className="absolute left-0 right-0 h-px"
-      style={{ background: 'linear-gradient(90deg, transparent, rgba(0,212,255,0.15), transparent)' }}
-      animate={{ top: ['0%', '100%'] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-    />
+    <div className="absolute top-0 left-0 w-96 h-96 rounded-full opacity-30"
+      style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
+    <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-30"
+      style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)', transform: 'translate(50%,50%)' }} />
   </div>
 );
 
@@ -146,19 +140,19 @@ const GlobalAnalyzeOverlay: React.FC = () => (
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     transition={{ duration: 0.2 }}
-    className="absolute inset-0 z-40 bg-cyber-bg/70 backdrop-blur-sm flex items-center justify-center"
+    className="absolute inset-0 z-40 bg-white/70 backdrop-blur-sm flex items-center justify-center"
   >
-    <div className="w-[420px] max-w-[82vw] rounded-xl border border-cyber-accent/30 bg-cyber-surface/80 p-5 shadow-cyber">
+    <div className="w-[420px] max-w-[82vw] rounded-xl border border-blue-500/30 bg-slate-900/80 p-5 shadow-cyber">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-2.5 h-2.5 rounded-full bg-cyber-green animate-pulse" />
-        <span className="text-sm font-semibold text-cyber-accent tracking-wide">Semantic Analysis In Progress</span>
+        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="text-sm font-semibold text-blue-500 tracking-wide">Semantic Analysis In Progress</span>
       </div>
       <div className="space-y-2">
-        <div className="h-2.5 rounded bg-cyber-panel animate-pulse" />
-        <div className="h-2.5 rounded bg-cyber-panel animate-pulse w-11/12" />
-        <div className="h-2.5 rounded bg-cyber-panel animate-pulse w-9/12" />
+        <div className="h-2.5 rounded bg-slate-800 animate-pulse" />
+        <div className="h-2.5 rounded bg-slate-800 animate-pulse w-11/12" />
+        <div className="h-2.5 rounded bg-slate-800 animate-pulse w-9/12" />
       </div>
-      <p className="mt-3 text-[11px] text-cyber-text-secondary font-mono">
+      <p className="mt-3 text-[11px] text-slate-300 font-mono">
         Building Semantic Energy Fingerprints from AST + telemetry signals...
       </p>
     </div>
@@ -171,13 +165,13 @@ const ErrorNotification: React.FC<{ error: string }> = ({ error }) => (
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: 20 }}
     transition={{ duration: 0.3 }}
-    className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg border border-energy-critical/50 bg-cyber-surface/95 p-4 shadow-2xl backdrop-blur-sm"
+    className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg border border-energy-critical/50 bg-slate-900/95 p-4 shadow-2xl backdrop-blur-sm"
   >
     <div className="flex items-start gap-3">
       <div className="w-2 h-2 rounded-full bg-energy-critical flex-shrink-0 mt-1" />
       <div>
         <div className="text-xs font-semibold text-energy-critical mb-1">Analysis Error</div>
-        <div className="text-xs text-cyber-text-secondary font-mono leading-relaxed">{error}</div>
+        <div className="text-xs text-slate-300 font-mono leading-relaxed">{error}</div>
       </div>
     </div>
   </motion.div>
@@ -245,7 +239,7 @@ const App: React.FC = () => {
         </main>
 
         <div
-          className="flex-none h-6 flex items-center px-4 gap-4 text-[10px] font-mono border-t border-cyber-border/30"
+          className="flex-none h-6 flex items-center px-4 gap-4 text-[10px] font-mono border-t border-slate-700/30"
           style={{ background: 'rgba(4,8,12,0.95)' }}
         >
           <span style={{ color: '#3a6b8a' }}>EcoLogic Research v2.0</span>
@@ -266,3 +260,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

@@ -113,7 +113,7 @@ export const EnergyFlameGraph: React.FC = () => {
         const energyColor = d3
             .scaleSequential<number, string>()
             .domain([0, maxEnergy])
-            .interpolator(d3.interpolateRgbBasis(['#00ff88', '#ffd700', '#ff6b35', '#ff3366']));
+            .interpolator(d3.interpolateRgbBasis(['#10b981', '#eab308', '#f97316', '#ef4444']));
 
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
@@ -134,7 +134,7 @@ export const EnergyFlameGraph: React.FC = () => {
             .attr('rx', 3)
             .attr('fill', (d) => energyColor(d.estimatedJoules))
             .attr('opacity', (d) => (selectedNodeId && selectedNodeId !== d.id ? 0.35 : 0.92))
-            .attr('stroke', (d) => (selectedNodeId === d.id ? '#e8f4f8' : 'rgba(0,0,0,0.25)'))
+            .attr('stroke', (d) => (selectedNodeId === d.id ? '#0f172a' : 'rgba(0,0,0,0.1)'))
             .attr('stroke-width', (d) => (selectedNodeId === d.id ? 1.5 : 0.5))
             .on('mousemove', (event, d) => {
                 setHoveredFlameNode(d.id);
@@ -148,10 +148,10 @@ export const EnergyFlameGraph: React.FC = () => {
                 tooltip.style.left = `${event.clientX - containerRect.left + 12}px`;
                 tooltip.style.top = `${event.clientY - containerRect.top - 10}px`;
                 tooltip.innerHTML = [
-                    `<div class="font-bold text-cyber-accent">${d.nodeType}</div>`,
-                    `<div>Line: <span class="text-cyber-yellow">${d.line}</span></div>`,
-                    `<div>Complexity: <span class="text-cyber-purple">${d.complexity}</span></div>`,
-                    `<div>Energy: <span class="text-cyber-orange">${d.estimatedJoules.toFixed(4)}J</span></div>`,
+                    `<div class="font-bold text-blue-700">${d.nodeType}</div>`,
+                    `<div>Line: <span class="text-emerald-600">${d.line}</span></div>`,
+                    `<div>Complexity: <span class="text-indigo-600">${d.complexity}</span></div>`,
+                    `<div>Energy: <span class="text-orange-500">${d.estimatedJoules.toFixed(4)}J</span></div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
@@ -186,12 +186,12 @@ export const EnergyFlameGraph: React.FC = () => {
             .attr('transform', `translate(0,${effectiveHeight + 2})`)
             .call(d3.axisBottom(xScale).ticks(6).tickFormat((tick) => `${Math.round(Number(tick) * 100)}%`));
 
-        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#1a3a5c'));
-        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#1a3a5c'));
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
         xAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
-                .attr('fill', '#7ab8d4')
+                .attr('fill', '#64748b')
                 .attr('font-size', '10px')
                 .attr('font-family', 'JetBrains Mono, monospace')
         );
@@ -203,7 +203,7 @@ export const EnergyFlameGraph: React.FC = () => {
                 .attr('y', yScale(depth) + rowHeight / 2)
                 .attr('dominant-baseline', 'middle')
                 .attr('text-anchor', 'end')
-                .attr('fill', '#3a6b8a')
+                .attr('fill', '#94a3b8')
                 .attr('font-size', '9px')
                 .attr('font-family', 'JetBrains Mono, monospace')
                 .text(complexityLabel);
@@ -228,7 +228,7 @@ export const EnergyFlameGraph: React.FC = () => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Energy Flame Graph</span>
-                <div className="flex items-center gap-2 text-xs text-cyber-text-muted font-mono">
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
                     <span>Width: Joule share</span>
                     <span>|</span>
                     <span>Rows: Big-O class</span>
@@ -237,12 +237,12 @@ export const EnergyFlameGraph: React.FC = () => {
 
             <div ref={containerRef} className="flex-1 relative overflow-hidden p-2">
                 {isAnalyzing && (
-                    <div className="absolute inset-0 z-20 bg-cyber-bg/75 backdrop-blur-sm flex items-center justify-center">
+                    <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-md space-y-2">
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse" />
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse" />
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-cyber-accent">Building semantic energy flame map...</p>
+                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
+                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
+                            <div className="h-3 rounded bg-slate-800 animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-blue-500">Building semantic energy flame map...</p>
                         </div>
                     </div>
                 )}
@@ -252,9 +252,9 @@ export const EnergyFlameGraph: React.FC = () => {
                         <motion.div
                             animate={{ opacity: [0.45, 1, 0.45] }}
                             transition={{ duration: 1.8, repeat: Infinity }}
-                            className="text-cyber-text-muted text-sm font-mono text-center"
+                            className="text-slate-400 text-sm font-mono text-center"
                         >
-                            <div className="text-cyber-accent">Run analysis to reveal AST energy hotspots</div>
+                            <div className="text-blue-500">Run analysis to reveal AST energy hotspots</div>
                         </motion.div>
                     </div>
                 ) : (
@@ -270,3 +270,4 @@ export const EnergyFlameGraph: React.FC = () => {
         </div>
     );
 };
+

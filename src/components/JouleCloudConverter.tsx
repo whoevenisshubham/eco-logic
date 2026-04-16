@@ -20,21 +20,21 @@ export const JouleCloudConverter: React.FC = () => {
             <div className="flex-1 p-4 overflow-auto font-mono text-sm space-y-4">
                 {isRunning ? (
                     <>
-                        <div className="p-3 border border-cyber-border/40 rounded-lg bg-cyber-surface">
-                            <div className="text-cyber-text-muted text-xs mb-1">Deployment Scale Assumption</div>
-                            <div className="text-cyber-accent font-bold">1,000,000 executions / day</div>
+                        <div className="p-3 border border-slate-700/40 rounded-lg bg-slate-900">
+                            <div className="text-slate-400 text-xs mb-1">Deployment Scale Assumption</div>
+                            <div className="text-blue-500 font-bold">1,000,000 executions / day</div>
                         </div>
-                        <div className="p-3 border border-cyber-orange/30 rounded-lg bg-cyber-orange/10">
-                            <div className="text-cyber-orange/80 text-xs mb-1">Monthly Cloud Energy Cost</div>
-                            <div className="text-cyber-orange text-lg font-bold">${monthlyCost.toFixed(2)}</div>
+                        <div className="p-3 border border-orange-500/30 rounded-lg bg-orange-500/10">
+                            <div className="text-orange-500/80 text-xs mb-1">Monthly Cloud Energy Cost</div>
+                            <div className="text-orange-500 text-lg font-bold">${monthlyCost.toFixed(2)}</div>
                         </div>
-                        <div className="p-3 border border-cyber-green/30 rounded-lg bg-cyber-green/10">
-                            <div className="text-cyber-green/80 text-xs mb-1">Daily Carbon Footprint</div>
-                            <div className="text-cyber-green text-lg font-bold">{(dailyCarbonGrams / 1000).toFixed(2)} kg CO₂</div>
+                        <div className="p-3 border border-emerald-500/30 rounded-lg bg-emerald-500/10">
+                            <div className="text-emerald-500/80 text-xs mb-1">Daily Carbon Footprint</div>
+                            <div className="text-emerald-500 text-lg font-bold">{(dailyCarbonGrams / 1000).toFixed(2)} kg CO₂</div>
                         </div>
                     </>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-cyber-text-muted text-center">
+                    <div className="h-full flex items-center justify-center text-xs text-slate-400 text-center">
                         Run analysis to forecast cloud impact
                     </div>
                 )}
@@ -42,3 +42,4 @@ export const JouleCloudConverter: React.FC = () => {
         </div>
     );
 };
+

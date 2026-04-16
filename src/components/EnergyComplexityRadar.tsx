@@ -25,18 +25,18 @@ export const EnergyComplexityRadar: React.FC = () => {
                     /* FIX: Added minWidth and minHeight to silence the Recharts -1 warning */
                     <ResponsiveContainer width="100%" height="100%" minWidth={10} minHeight={10}>
                         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                            <PolarGrid stroke="rgba(26,58,92,0.5)" />
-                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#7ab8d4', fontSize: 10, fontFamily: 'monospace' }} />
+                            <PolarGrid stroke="#e2e8f0" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }} />
                             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                            <Radar name="Primary Execution" dataKey="A" stroke="#00d4ff" fill="#00d4ff" fillOpacity={0.3} />
+                            <Radar name="Primary Execution" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
                             <Tooltip 
-                                contentStyle={{ backgroundColor: 'rgba(8,15,26,0.9)', border: '1px solid #1a3a5c', borderRadius: '8px' }} 
-                                itemStyle={{ color: '#00d4ff' }} 
+                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }} 
+                                itemStyle={{ color: '#3b82f6' }} 
                             />
                         </RadarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-cyber-text-muted font-mono">
+                    <div className="h-full flex items-center justify-center text-xs text-slate-400 font-mono">
                         Run analysis to view footprint radar
                     </div>
                 )}

@@ -6,20 +6,20 @@
 
 /* ─── Root Variables ─────────────────────────────────────────────────── */
 :root {
-  --bg-primary: #020408;
-  --bg-surface: #080f1a;
-  --bg-panel: #0d1928;
-  --border-color: #1a3a5c;
-  --accent: #00d4ff;
-  --accent-dim: #0094b3;
-  --green: #00ff88;
-  --orange: #ff6b35;
-  --purple: #b44fff;
-  --red: #ff3366;
-  --yellow: #ffd700;
-  --text-primary: #e8f4f8;
-  --text-secondary: #7ab8d4;
-  --text-muted: #3a6b8a;
+  --bg-primary: #f8fafc; /* slate-50 */
+  --bg-surface: #ffffff; /* white */
+  --bg-panel: #ffffff;
+  --border-color: #e2e8f0; /* slate-200 */
+  --accent: #3b82f6; /* blue-500 */
+  --accent-dim: #93c5fd; /* blue-300 */
+  --green: #10b981; /* emerald-500 */
+  --orange: #f59e0b; /* amber-500 */
+  --purple: #8b5cf6; /* violet-500 */
+  --red: #ef4444; /* red-500 */
+  --yellow: #f59e0b;
+  --text-primary: #0f172a; /* slate-900 */
+  --text-secondary: #475569; /* slate-600 */
+  --text-muted: #64748b; /* slate-500 */
 }
 
 /* ─── Base Reset ─────────────────────────────────────────────────────── */
@@ -35,69 +35,92 @@ html, body, #root {
   color: var(--text-primary);
 }
 
-/* ─── Glassmorphism Panels ───────────────────────────────────────────── */
+/* ─── Panel & UI Components ───────────────────────────────────────────── */
 @layer components {
   .glass-panel {
-    @apply relative rounded-xl border border-cyber-border/40;
-    background: rgba(8, 15, 26, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(0, 212, 255, 0.06);
+    @apply relative rounded-xl border border-slate-200 bg-white shadow-sm;
   }
   
   .glass-panel-bright {
-    @apply glass-panel;
-    background: rgba(13, 25, 40, 0.9);
-    box-shadow: 0 0 40px rgba(0, 212, 255, 0.1), inset 0 1px 0 rgba(0, 212, 255, 0.15);
+    @apply glass-panel shadow-md;
   }
   
-  .cyber-btn {
+  .btn {
     @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border;
-    @apply border-cyber-accent/30 text-cyber-accent bg-cyber-accent/10;
-    @apply hover:bg-cyber-accent/20 hover:shadow-glow-accent hover:border-cyber-accent/60;
+    @apply border-blue-200 text-blue-600 bg-blue-50;
+    @apply hover:bg-blue-100 hover:border-blue-300;
     @apply active:scale-95;
   }
 
-  .cyber-btn-green {
-    @apply cyber-btn;
-    @apply border-cyber-green/30 text-cyber-green bg-cyber-green/10;
-    @apply hover:bg-cyber-green/20 hover:shadow-glow-green hover:border-cyber-green/60;
+  .btn-green {
+    @apply btn;
+    @apply border-emerald-200 text-emerald-600 bg-emerald-50;
+    @apply hover:bg-emerald-100 hover:border-emerald-300;
   }
 
-  .cyber-btn-orange {
-    @apply cyber-btn;
-    @apply border-cyber-orange/30 text-cyber-orange bg-cyber-orange/10;
-    @apply hover:bg-cyber-orange/20 hover:border-cyber-orange/60;
+  .btn-orange {
+    @apply btn;
+    @apply border-orange-200 text-orange-600 bg-orange-50;
+    @apply hover:bg-orange-100 hover:border-orange-300;
   }
 
   .cyber-badge {
     @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
-    @apply border border-cyber-accent/30 text-cyber-accent bg-cyber-accent/10;
+    @apply border border-blue-200 text-blue-700 bg-blue-50;
   }
 
-  .energy-low { @apply text-energy-low; }
-  .energy-medium { @apply text-energy-medium; }
-  .energy-high { @apply text-energy-high; }
-  .energy-critical { @apply text-energy-critical; }
+  .energy-low { @apply text-emerald-600; }
+  .energy-medium { @apply text-amber-500; }
+  .energy-high { @apply text-orange-500; }
+  .energy-critical { @apply text-red-500; }
 
   .stat-card {
     @apply glass-panel p-4 flex flex-col gap-2;
   }
 
   .panel-header {
-    @apply px-4 py-3 flex items-center justify-between border-b border-cyber-border/40;
+    @apply px-4 py-3 flex items-center justify-between border-b border-slate-100;
   }
 
   .panel-title {
-    @apply text-sm font-semibold text-cyber-accent uppercase tracking-widest;
+    @apply text-sm font-semibold text-slate-800 tracking-wide;
   }
 }
 
 /* ─── Scrollbar Styling ──────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ─── Monaco Decorations ─────────────────────────────────────────────── */
+.heatmap-line-low {
+  background: rgba(16, 185, 129, 0.1);
+}
+.heatmap-line-medium {
+  background: rgba(245, 158, 11, 0.1);
+}
+.heatmap-line-high {
+  background: rgba(249, 115, 22, 0.1);
+}
+.heatmap-line-critical {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.glyph-energy-high {
+  background: #f97316;
+  border-radius: 50%;
+  margin-left: 5px;
+  width: 8px !important;
+  height: 8px !important;
+}
+.glyph-energy-low {
+  background: #10b981;
+  border-radius: 50%;
+  margin-left: 5px;
+  width: 8px !important;
+  height: 8px !important;
+}
 
 /* ─── React Grid Layout ──────────────────────────────────────────────── */
 .react-grid-layout { position: relative; }
@@ -156,8 +179,8 @@ html, body, #root {
   @apply inline-flex items-center gap-1.5;
 }
 .live-dot {
-  @apply w-2 h-2 rounded-full bg-cyber-green animate-pulse;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+  @apply w-2 h-2 rounded-full bg-emerald-500 animate-pulse;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
 /* ─── Drag Handle ────────────────────────────────────────────────────── */
@@ -167,11 +190,12 @@ html, body, #root {
 .drag-handle:active { cursor: grabbing; }
 
 /* ─── Energy Heatmap Code Lines ─────────────────────────────────────── */
-.heatmap-line-critical { background: rgba(255, 51, 102, 0.15) !important; border-left: 3px solid #ff3366 !important; }
-.heatmap-line-high { background: rgba(255, 107, 53, 0.12) !important; border-left: 3px solid #ff6b35 !important; }
-.heatmap-line-medium { background: rgba(255, 215, 0, 0.08) !important; border-left: 3px solid #ffd700 !important; }
-.heatmap-line-low { background: rgba(0, 255, 136, 0.05) !important; border-left: 3px solid #00ff88 !important; }
+.heatmap-line-critical { background: rgba(239, 68, 68, 0.1) !important; border-left: 3px solid #ef4444 !important; }
+.heatmap-line-high { background: rgba(249, 115, 22, 0.1) !important; border-left: 3px solid #f97316 !important; }
+.heatmap-line-medium { background: rgba(234, 179, 8, 0.1) !important; border-left: 3px solid #eab308 !important; }
+.heatmap-line-low { background: rgba(16, 185, 129, 0.05) !important; border-left: 3px solid #10b981 !important; }
 
 /* ─── Flame Graph ────────────────────────────────────────────────────── */
 .flame-rect { cursor: pointer; transition: opacity 0.2s; }
 .flame-rect:hover { opacity: 0.85; filter: brightness(1.3); }
+

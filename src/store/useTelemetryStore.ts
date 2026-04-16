@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
-export type Algorithm = 'mergesort' | 'timsort';
 export type ProfilerMode = 'live' | 'differential' | 'flame' | 'sunburst' | 'scatter' | 'enterprise';
 
 // Exact frontend mirror of backend JSON contract.
@@ -29,8 +28,7 @@ export interface ComplexityMetrics {
 }
 
 export interface TelemetryPoint {
-    timestamp: number;
-    elapsed: number;
+    nodeIndex: number;
     energy: number;
     cpuCore: number;
     dramLatency: number;
@@ -46,14 +44,6 @@ export interface EnergyMapping {
     dramLatency: number;
     branchMispredict: number;
     cacheHitRate: number;
-    hardwareEvents: HardwareEvent[];
-}
-
-export interface HardwareEvent {
-    type: 'thermal_throttle' | 'memory_pressure' | 'branch_miss' | 'cache_miss' | 'gpu_spike';
-    severity: 'low' | 'medium' | 'high';
-    lineId: number;
-    description: string;
 }
 
 export interface TelemetryState {
@@ -66,11 +56,7 @@ export interface TelemetryState {
 
     telemetryA: TelemetryPoint[];
     telemetryB: TelemetryPoint[];
-    algorithmA: Algorithm;
-    algorithmB: Algorithm;
-    activeAlgorithm: Algorithm;
     energyMap: Map<number, EnergyMapping>;
-    hardwareEvents: HardwareEvent[];
     mode: ProfilerMode;
     isRunning: boolean;
     isStreaming: boolean;
@@ -84,9 +70,9 @@ export interface TelemetryState {
     avgCacheHitA: number;
     avgCacheHitB: number;
     joulesDelta: number;
+    baselineEnergy: number | null;
 
     setMode: (mode: ProfilerMode) => void;
-    setAlgorithm: (algo: Algorithm, slot: 'A' | 'B') => void;
     setSourceCode: (sourceCode: string) => void;
     analyzeCode: (sourceCode: string) => Promise<void>;
     runProfiler: () => void;
@@ -95,6 +81,7 @@ export interface TelemetryState {
     setTimeWindow: (window: [number, number] | null) => void;
     setHoveredFlameNode: (nodeId: string | null) => void;
     syncTelemetryToCode: (elapsed: number) => number;
+    setBaselineEnergy: (energy: number | null) => void;
 }
 
 function getBackendApiBaseUrl(): string {
@@ -103,7 +90,6 @@ function getBackendApiBaseUrl(): string {
 }
 
 function mapFingerprintToLegacyTelemetry(astTree: SemanticEnergyFingerprintNode[]): TelemetryPoint[] {
-    const now = Date.now();
     return astTree.map((node, index) => {
         const energy = Number(node.estimatedJoules) || 0;
         const cpuCore = Math.max(1, energy * 8);
@@ -111,8 +97,7 @@ function mapFingerprintToLegacyTelemetry(astTree: SemanticEnergyFingerprintNode[
         const cacheHitRate = Math.max(0.1, Math.min(0.99, 1 - (energy / 20)));
 
         return {
-            timestamp: now + index,
-            elapsed: index * 1.5,
+            nodeIndex: index,
             energy,
             cpuCore,
             dramLatency,
@@ -136,7 +121,6 @@ function buildEnergyMapFromAst(astTree: SemanticEnergyFingerprintNode[]): Map<nu
                 dramLatency: Math.max(2, 40 - node.estimatedJoules),
                 branchMispredict: 0,
                 cacheHitRate: Math.max(0.1, Math.min(0.99, 1 - (node.estimatedJoules / 20))),
-                hardwareEvents: [],
             });
             continue;
         }
@@ -193,11 +177,7 @@ export const useTelemetryStore = create<TelemetryState>()(
 
         telemetryA: [],
         telemetryB: [],
-        algorithmA: 'mergesort',
-        algorithmB: 'timsort',
-        activeAlgorithm: 'mergesort',
         energyMap: new Map(),
-        hardwareEvents: [],
         mode: 'live',
         isRunning: false,
         isStreaming: false,
@@ -211,18 +191,13 @@ export const useTelemetryStore = create<TelemetryState>()(
         avgCacheHitA: 0,
         avgCacheHitB: 0,
         joulesDelta: 0,
+        baselineEnergy: null,
 
         setMode: (mode) => set({ mode }),
 
-        setAlgorithm: (algo, slot) => {
-            if (slot === 'A') {
-                set({ algorithmA: algo });
-                return;
-            }
-            set({ algorithmB: algo });
-        },
-
         setSourceCode: (sourceCode) => set({ sourceCode }),
+
+        setBaselineEnergy: (energy) => set({ baselineEnergy: energy }),
 
         analyzeCode: async (sourceCode: string) => {
             set({
@@ -255,7 +230,6 @@ export const useTelemetryStore = create<TelemetryState>()(
                     telemetryA: legacyTelemetry,
                     telemetryB: [],
                     energyMap: buildEnergyMapFromAst(data.astTree),
-                    hardwareEvents: [],
                     isRunning: true,
                     totalEnergyA: data.totalEnergy,
                     totalEnergyB: 0,
@@ -289,12 +263,12 @@ export const useTelemetryStore = create<TelemetryState>()(
 
         setHoveredFlameNode: (nodeId) => set({ hoveredFlameNode: nodeId }),
 
-        syncTelemetryToCode: (elapsed) => {
+        syncTelemetryToCode: (nodeIndex) => {
             const { telemetryA } = get();
             if (!telemetryA.length) {
                 return 1;
             }
-            const point = telemetryA.find((entry) => entry.elapsed >= elapsed) ?? telemetryA[0];
+            const point = telemetryA.find((entry) => entry.nodeIndex >= nodeIndex) ?? telemetryA[0];
             return point.lineId;
         },
     }))

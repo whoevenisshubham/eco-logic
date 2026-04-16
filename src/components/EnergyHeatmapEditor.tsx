@@ -1,17 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import Editor, { type Monaco } from '@monaco-editor/react';
 import type * as MonacoEditor from 'monaco-editor';
 import { motion } from 'framer-motion';
 import { useTelemetryStore } from '../store/useTelemetryStore';
-import { Database, GitBranch, Loader2, Thermometer, Zap } from 'lucide-react';
-
-const HARDWARE_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
-    thermal_throttle: { icon: <Thermometer size={10} />, color: '#ff3366' },
-    memory_pressure: { icon: <Database size={10} />, color: '#b44fff' },
-    branch_miss: { icon: <GitBranch size={10} />, color: '#ff6b35' },
-    cache_miss: { icon: <Database size={10} />, color: '#4fc3f7' },
-    gpu_spike: { icon: <Zap size={10} />, color: '#ffd700' },
-};
+import { Loader2, Zap } from 'lucide-react';
 
 export const EnergyHeatmapEditor: React.FC = () => {
     const editorRef = useRef<MonacoEditor.editor.IStandaloneCodeEditor | null>(null);
@@ -21,7 +13,6 @@ export const EnergyHeatmapEditor: React.FC = () => {
     const {
         selectedLineId,
         energyMap,
-        hardwareEvents,
         isRunning,
         isAnalyzing,
         sourceCode,
@@ -105,17 +96,6 @@ export const EnergyHeatmapEditor: React.FC = () => {
         void analyzeCode(sourceCode);
     }, [analyzeCode, sourceCode]);
 
-    const eventsByLine = useMemo(() => {
-        const map = new Map<number, typeof hardwareEvents>();
-        hardwareEvents.forEach((event) => {
-            const existing = map.get(event.lineId) ?? [];
-            map.set(event.lineId, [...existing, event]);
-        });
-        return map;
-    }, [hardwareEvents]);
-
-    const totalLines = Math.max(1, sourceCode.split('\n').length);
-
     return (
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
@@ -125,31 +105,31 @@ export const EnergyHeatmapEditor: React.FC = () => {
                         type="button"
                         onClick={handleRunProfiling}
                         disabled={isAnalyzing || sourceCode.trim().length === 0}
-                        className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[11px] font-semibold tracking-wide text-cyber-bg bg-cyber-accent hover:bg-cyber-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_0_16px_rgba(0,255,136,0.35)]"
+                        className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                     >
                         {isAnalyzing ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
                         {isAnalyzing ? 'Profiling...' : 'Run Semantic Profiling'}
                     </button>
                     {isRunning && (
                         <div className="flex items-center gap-2 text-xs">
-                            <span className="w-3 h-1.5 rounded bg-energy-critical inline-block" />
-                            <span className="text-cyber-text-secondary">Critical</span>
-                            <span className="w-3 h-1.5 rounded bg-energy-high inline-block" />
-                            <span className="text-cyber-text-secondary">High</span>
-                            <span className="w-3 h-1.5 rounded bg-energy-medium inline-block" />
-                            <span className="text-cyber-text-secondary">Medium</span>
-                            <span className="w-3 h-1.5 rounded bg-energy-low inline-block" />
-                            <span className="text-cyber-text-secondary">Low</span>
+                            <span className="w-3 h-1.5 rounded bg-red-500 inline-block" />
+                            <span className="text-slate-600">Critical</span>
+                            <span className="w-3 h-1.5 rounded bg-orange-500 inline-block" />
+                            <span className="text-slate-600">High</span>
+                            <span className="w-3 h-1.5 rounded bg-amber-500 inline-block" />
+                            <span className="text-slate-600">Medium</span>
+                            <span className="w-3 h-1.5 rounded bg-emerald-500 inline-block" />
+                            <span className="text-slate-600">Low</span>
                         </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-cyber-text-muted">input.py</span>
+                    <span className="text-[10px] font-mono text-slate-500">input.py</span>
                     {selectedLineId && (
                         <motion.span
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="cyber-badge"
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200 text-blue-700 bg-blue-50"
                         >
                             <Zap size={10} />
                             Line {selectedLineId}
@@ -161,7 +141,7 @@ export const EnergyHeatmapEditor: React.FC = () => {
             <div className="flex-1 flex overflow-hidden">
                 <div className="flex-1 overflow-hidden">
                     <Editor
-                        theme="vs-dark"
+                        theme="vs-light"
                         language="python"
                         value={sourceCode}
                         onChange={handleEditorChange}
@@ -184,45 +164,11 @@ export const EnergyHeatmapEditor: React.FC = () => {
                         }}
                     />
                 </div>
-
-                {isRunning && (
-                    <div
-                        className="w-10 flex-none overflow-hidden border-l border-cyber-border/40 flex flex-col"
-                        style={{ background: '#060c14' }}
-                    >
-                        <div className="text-[9px] text-cyber-text-muted text-center py-1 tracking-widest border-b border-cyber-border/30">HW</div>
-                        <div className="flex-1 relative overflow-hidden">
-                            {Array.from(eventsByLine.entries()).map(([lineId, events]) => {
-                                const topPct = ((lineId - 1) / totalLines) * 100;
-                                return (
-                                    <div
-                                        key={lineId}
-                                        className="absolute left-0 right-0 flex flex-col items-center gap-0.5 cursor-pointer group"
-                                        style={{ top: `${topPct}%`, transform: 'translateY(-50%)' }}
-                                        title={events.map((event) => event.description).join('\n')}
-                                    >
-                                        {events.slice(0, 2).map((event, index) => {
-                                            const visual = HARDWARE_ICONS[event.type];
-                                            return visual ? (
-                                                <div key={`${event.type}-${index}`} style={{ color: visual.color, filter: `drop-shadow(0 0 4px ${visual.color})` }}>
-                                                    {visual.icon}
-                                                </div>
-                                            ) : null;
-                                        })}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
             </div>
 
             {isRunning && energyMap.size > 0 && (
-                <div className="flex-none px-4 py-2 border-t border-cyber-border/30 flex items-center gap-4 text-xs">
-                    <span className="text-cyber-text-muted">{energyMap.size} lines profiled</span>
-                    <span className="text-cyber-red">{hardwareEvents.filter((event) => event.type === 'thermal_throttle').length} thermal events</span>
-                    <span className="text-cyber-purple">{hardwareEvents.filter((event) => event.type === 'branch_miss').length} branch misses</span>
-                    <span className="text-cyber-blue">{hardwareEvents.filter((event) => event.type === 'cache_miss').length} cache misses</span>
+                <div className="flex-none px-4 py-2 border-t border-slate-200 flex items-center gap-4 text-xs">
+                    <span className="text-slate-500">{energyMap.size} lines profiled</span>
                 </div>
             )}
         </div>

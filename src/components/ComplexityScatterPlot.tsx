@@ -99,30 +99,30 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
         g.append('g')
             .call(d3.axisLeft(yScale).ticks(6).tickSize(-width).tickFormat(() => ''))
             .call((axis) => axis.select('.domain').remove())
-            .call((axis) => axis.selectAll('.tick line').attr('stroke', 'rgba(26,58,92,0.4)').attr('stroke-dasharray', '4,4'));
+            .call((axis) => axis.selectAll('.tick line').attr('stroke', '#e2e8f0').attr('stroke-dasharray', '4,4'));
 
         const xAxis = g
             .append('g')
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(xScale));
 
-        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#1a3a5c'));
-        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#1a3a5c'));
+        xAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
+        xAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
         xAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
-                .attr('fill', '#7ab8d4')
+                .attr('fill', '#64748b')
                 .attr('font-size', '10px')
                 .attr('font-family', 'JetBrains Mono, monospace')
         );
 
         const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(6).tickFormat((value) => `${Number(value).toFixed(2)} J`));
-        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#1a3a5c'));
-        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#1a3a5c'));
+        yAxis.call((axis) => axis.select('.domain').attr('stroke', '#cbd5e1'));
+        yAxis.call((axis) => axis.selectAll('.tick line').attr('stroke', '#cbd5e1'));
         yAxis.call((axis) =>
             axis
                 .selectAll('.tick text')
-                .attr('fill', '#7ab8d4')
+                .attr('fill', '#64748b')
                 .attr('font-size', '10px')
                 .attr('font-family', 'JetBrains Mono, monospace')
         );
@@ -131,7 +131,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('x', width / 2)
             .attr('y', height + 34)
             .attr('text-anchor', 'middle')
-            .attr('fill', '#7ab8d4')
+            .attr('fill', '#64748b')
             .attr('font-size', '10px')
             .attr('font-family', 'JetBrains Mono, monospace')
             .text('Overall Complexity');
@@ -141,7 +141,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('x', -height / 2)
             .attr('y', -46)
             .attr('text-anchor', 'middle')
-            .attr('fill', '#7ab8d4')
+            .attr('fill', '#64748b')
             .attr('font-size', '10px')
             .attr('font-family', 'JetBrains Mono, monospace')
             .text('Total Energy (Joules)');
@@ -155,8 +155,8 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('cx', (point) => xScale(point.complexity) ?? 0)
             .attr('cy', (point) => yScale(point.totalEnergy))
             .attr('r', (_, index) => (index === newestIndex ? 8 : 5))
-            .attr('fill', (_, index) => (index === newestIndex ? '#00d4ff' : 'rgba(0,212,255,0.45)'))
-            .attr('stroke', '#e8f4f8')
+            .attr('fill', (_, index) => (index === newestIndex ? '#3b82f6' : 'rgba(59,130,246,0.4)'))
+            .attr('stroke', '#ffffff')
             .attr('stroke-width', (_, index) => (index === newestIndex ? 1.4 : 0.8))
             .on('mousemove', (event, point) => {
                 const tooltip = tooltipRef.current;
@@ -169,9 +169,9 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
                 tooltip.style.left = `${event.clientX - parentRect.left + 12}px`;
                 tooltip.style.top = `${event.clientY - parentRect.top - 10}px`;
                 tooltip.innerHTML = [
-                    `<div class=\"font-bold text-cyber-accent\">Semantic Energy Fingerprint</div>`,
-                    `<div>Complexity: <span class=\"text-cyber-yellow\">${point.complexity}</span></div>`,
-                    `<div>Total Energy: <span class=\"text-cyber-orange\">${point.totalEnergy.toFixed(4)} J</span></div>`,
+                    `<div class=\"font-bold text-blue-700\">Semantic Energy Fingerprint</div>`,
+                    `<div>Complexity: <span class=\"text-emerald-600\">${point.complexity}</span></div>`,
+                    `<div>Total Energy: <span class=\"text-orange-500\">${point.totalEnergy.toFixed(4)} J</span></div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
@@ -199,16 +199,16 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <span className="panel-title">Energy-Complexity Scatter</span>
-                <span className="text-[10px] font-mono text-cyber-text-muted">X: overall Big-O · Y: total Joules</span>
+                <span className="text-[10px] font-mono text-slate-400">X: overall Big-O ï¿½ Y: total Joules</span>
             </div>
 
             <div ref={containerRef} className="flex-1 relative overflow-hidden">
                 {isAnalyzing && (
-                    <div className="absolute inset-0 z-20 bg-cyber-bg/75 backdrop-blur-sm flex items-center justify-center">
+                    <div className="absolute inset-0 z-20 bg-white/75 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse" />
-                            <div className="h-3 rounded bg-cyber-panel animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-cyber-accent">Computing complexity-energy projection...</p>
+                            <div className="h-3 rounded bg-slate-800 animate-pulse" />
+                            <div className="h-3 rounded bg-slate-800 animate-pulse w-5/6" />
+                            <p className="text-center text-xs font-mono text-blue-500">Computing complexity-energy projection...</p>
                         </div>
                     </div>
                 )}
@@ -218,7 +218,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
                         <motion.div
                             animate={{ opacity: [0.45, 1, 0.45] }}
                             transition={{ duration: 1.8, repeat: Infinity }}
-                            className="text-cyber-text-muted text-sm font-mono text-center"
+                            className="text-slate-400 text-sm font-mono text-center"
                         >
                             <div>Run analysis to plot Big-O vs Joules</div>
                         </motion.div>
@@ -236,3 +236,4 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
         </div>
     );
 });
+

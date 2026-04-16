@@ -16,24 +16,24 @@ export const CICDSimulationPanel: React.FC = () => {
             </div>
             <div className="flex-1 p-4 overflow-auto font-mono text-xs">
                 <div className="space-y-4">
-                    <div className="p-3 border border-cyber-border/40 rounded-lg bg-cyber-surface flex items-center gap-3">
-                        <PlayCircle className="text-cyber-blue" size={18} />
+                    <div className="p-3 border border-slate-700/40 rounded-lg bg-slate-900 flex items-center gap-3">
+                        <PlayCircle className="text-blue-500" size={18} />
                         <div>
-                            <div className="text-cyber-text-primary font-bold">Standard Build & Test</div>
-                            <div className="text-cyber-text-muted">Passed smoothly (1.2s)</div>
+                            <div className="text-slate-100-primary font-bold">Standard Build & Test</div>
+                            <div className="text-slate-400">Passed smoothly (1.2s)</div>
                         </div>
                     </div>
                     <div className={`p-3 border rounded-lg flex items-center gap-3 transition-colors ${
-                        status === 'idle' ? 'border-cyber-border/40 bg-cyber-surface' : 
-                        status === 'failed' ? 'border-cyber-red/40 bg-cyber-red/10' : 
-                        'border-cyber-green/40 bg-cyber-green/10'
+                        status === 'idle' ? 'border-slate-700/40 bg-slate-900' : 
+                        status === 'failed' ? 'border-red-500/40 bg-red-500/10' : 
+                        'border-emerald-500/40 bg-emerald-500/10'
                     }`}>
-                        {status === 'idle' && <AlertTriangle className="text-cyber-text-muted" size={18} />}
-                        {status === 'passed' && <CheckCircle className="text-cyber-green" size={18} />}
-                        {status === 'failed' && <XCircle className="text-cyber-red" size={18} />}
+                        {status === 'idle' && <AlertTriangle className="text-slate-400" size={18} />}
+                        {status === 'passed' && <CheckCircle className="text-emerald-500" size={18} />}
+                        {status === 'failed' && <XCircle className="text-red-500" size={18} />}
                         <div>
-                            <div className="text-cyber-text-primary font-bold">Semantic Energy Budget Check</div>
-                            <div className="text-cyber-text-muted mt-1">
+                            <div className="text-slate-100-primary font-bold">Semantic Energy Budget Check</div>
+                            <div className="text-slate-400 mt-1">
                                 {status === 'idle' 
                                     ? 'Awaiting profiler execution...' 
                                     : `Budget: ${energyBudget.toFixed(2)} J | Actual: ${totalEnergyA.toFixed(2)} J`
@@ -46,3 +46,4 @@ export const CICDSimulationPanel: React.FC = () => {
         </div>
     );
 };
+
