@@ -199,6 +199,50 @@ html, body, #root {
 .live-indicator {
   @apply inline-flex items-center gap-1.5;
 }
+
+/* ─── Print Styles ───────────────────────────────────────────────────── */
+@media print {
+  nav, .cyber-background, .pointer-events-none, .genie-panel {
+    display: none !important;
+  }
+
+  body, html, #root, .h-screen {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .react-grid-layout {
+    display: block !important;
+    height: auto !important;
+    width: 100% !important;
+    transform: none !important;
+  }
+  
+  .react-grid-item {
+    position: relative !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-bottom: 2rem !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  .glass-panel {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+  
+  .react-grid-item:has(> .print\:hidden), 
+  .react-grid-item:has(.print\:hidden) {
+    display: none !important;
+  }
+}
 .live-dot {
   @apply w-2 h-2 rounded-full bg-emerald-500 animate-pulse;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);

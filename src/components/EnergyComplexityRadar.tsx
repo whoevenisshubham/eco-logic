@@ -3,14 +3,44 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { useTelemetryStore } from '../store/useTelemetryStore';
 
 export const EnergyComplexityRadar: React.FC = () => {
-    const { isRunning, totalEnergyA, peakPowerA } = useTelemetryStore();
+    const { isRunning, totalEnergyA, astTree } = useTelemetryStore();
 
-    // Derive realistic mock metrics based on actual energy data for the radar chart
+    let maxComplexityScore = 0;
+    let loopCount = 0;
+    let memoryOpsCount = 0;
+    let functionCallCount = 0;
+
+    if (isRunning && astTree) {
+        astTree.forEach((node) => {
+            let nodeScore = 10;
+            switch (node.complexity) {
+                case 'O(1)': nodeScore = 10; break;
+                case 'O(log N)': nodeScore = 20; break;
+                case 'O(N)': nodeScore = 40; break;
+                case 'O(N log N)': nodeScore = 60; break;
+                case 'O(N^2)': nodeScore = 80; break;
+                case 'O(2^N)': nodeScore = 100; break;
+            }
+            if (nodeScore > maxComplexityScore) {
+                maxComplexityScore = nodeScore;
+            }
+
+            if (node.nodeType === 'ForLoop' || node.nodeType === 'WhileLoop') {
+                loopCount += 1;
+            } else if (node.nodeType === 'Assignment' || node.nodeType === 'ListComp') {
+                memoryOpsCount += 1;
+            } else if (node.nodeType === 'Call') {
+                functionCallCount += 1;
+            }
+        });
+    }
+
     const radarData = [
-        { subject: 'AST Depth', A: Math.min(100, isRunning ? 20 + peakPowerA * 2 : 0), fullMark: 100 },
-        { subject: 'Loop Pressure', A: Math.min(100, isRunning ? 10 + totalEnergyA * 2 : 0), fullMark: 100 },
-        { subject: 'Memory Ops Proxy', A: Math.min(100, totalEnergyA * 5), fullMark: 100 },
-        { subject: 'Total Joules', A: Math.min(100, totalEnergyA * 10), fullMark: 100 },
+        { subject: 'AST Depth', A: maxComplexityScore, fullMark: 100 },
+        { subject: 'Loop Pressure', A: Math.min(100, loopCount * 10), fullMark: 100 },
+        { subject: 'Memory Ops', A: Math.min(100, memoryOpsCount * 5), fullMark: 100 },
+        { subject: 'Function Calls', A: Math.min(100, functionCallCount * 8), fullMark: 100 },
+        { subject: 'Energy Footprint', A: Math.min(100, totalEnergyA > 0 ? (totalEnergyA / Math.max(totalEnergyA, 10)) * 100 : 0), fullMark: 100 },
     ];
 
     return (
@@ -28,10 +58,10 @@ export const EnergyComplexityRadar: React.FC = () => {
                             <PolarGrid stroke="#e2e8f0" strokeWidth={1.5} />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
                             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                            <Radar name="Primary Execution" dataKey="A" stroke="#4f46e5" strokeWidth={2.5} fill="#4f46e5" fillOpacity={0.15} />
+                            <Radar name="Primary Execution" dataKey="A" stroke="#0ea5e9" strokeWidth={2.5} fill="#4f46e5" fillOpacity={0.15} />
                             <Tooltip 
                                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', color: '#334155', padding: '12px', fontWeight: 500, fontSize: '12px' }} 
-                                itemStyle={{ color: '#4f46e5', fontWeight: 700 }} 
+                                itemStyle={{ color: '#0ea5e9', fontWeight: 700 }} 
                             />
                         </RadarChart>
                     </ResponsiveContainer>

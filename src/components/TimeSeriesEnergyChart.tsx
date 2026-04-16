@@ -234,9 +234,9 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 tooltip.style.left = `${event.clientX - parentRect.left}px`;
                 tooltip.style.top = `${event.clientY - parentRect.top}px`;
                 tooltip.innerHTML = [
-                    `<div class="tooltip-title text-slate-700 font-semibold mb-1"><span>${closest.functionName}</span> <span class=\"text-xs bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeSequenceIndex.toFixed(0)}</span></div>`,
-                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Energy</span> <span class=\"text-indigo-600 font-bold\">${closest.energy.toFixed(3)}J</span></div>`,
-                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Src Line</span> <span class=\"text-amber-600\">${closest.lineId}</span></div>`,
+                    `<div class="tooltip-title text-slate-700 font-semibold mb-1"><span>${closest.functionName}</span> <span class=\"text-xs bg-slate-100 text-slate-500 px-1.5 rounded\">AST Node ID: ${closest.nodeSequenceIndex.toFixed(0)}</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Estimated Joules</span> <span class=\"text-indigo-600 font-bold\">${closest.energy.toFixed(4)}J</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Line Number</span> <span class=\"text-amber-600\">${closest.lineId}</span></div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
