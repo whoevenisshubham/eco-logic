@@ -47,134 +47,140 @@ export interface SunburstNode {
 
 // ─── Code Samples ──────────────────────────────────────────────────────
 export const ALGORITHM_CODE: Record<string, string> = {
-    mergesort: `// MergeSort Implementation — O(n log n)
-function mergeSort(arr: number[]): number[] {
-  if (arr.length <= 1) return arr;
-  
-  const mid = Math.floor(arr.length / 2);
-  const left = arr.slice(0, mid);  // Memory allocation
-  const right = arr.slice(mid);    // Memory allocation
-  
-  // Recursive calls — stack depth increases
-  const sortedLeft = mergeSort(left);
-  const sortedRight = mergeSort(right);
-  
-  return merge(sortedLeft, sortedRight);
-}
+    mergesort: `def merge_sort(arr):
+    """MergeSort Implementation — O(n log n)"""
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = arr[:mid]    # Memory allocation
+    right = arr[mid:]   # Memory allocation
+    
+    # Recursive calls — stack depth increases
+    sorted_left = merge_sort(left)
+    sorted_right = merge_sort(right)
+    
+    return merge(sorted_left, sorted_right)
 
-function merge(left: number[], right: number[]): number[] {
-  const result: number[] = [];
-  let i = 0, j = 0;
-  
-  while (i < left.length && j < right.length) {
-    if (left[i] <= right[j]) {    // Branch prediction critical
-      result.push(left[i++]);
-    } else {
-      result.push(right[j++]);    // Cache miss likely here
-    }
-  }
-  
-  return result.concat(left.slice(i), right.slice(j));
-}
+def merge(left, right):
+    result = []
+    i = j = 0
+    
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:     # Branch prediction critical
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])  # Cache miss likely here
+            j += 1
+    
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
 
-// Matrix multiplication — O(n³) DRAM intensive
-function matrixMultiply(A: number[][], B: number[][]): number[][] {
-  const n = A.length;
-  const C: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
-  
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {       // Cache thrashing
-      for (let k = 0; k < n; k++) {     // FMA instructions
-        C[i][j] += A[i][k] * B[k][j];  // AVX-512 candidate
-      }
-    }
-  }
-  return C;
-}
+def matrix_multiply(A, B):
+    """Matrix multiplication — O(n³) DRAM intensive"""
+    n = len(A)
+    C = [[0] * n for _ in range(n)]
+    
+    for i in range(n):
+        for j in range(n):              # Cache thrashing
+            for k in range(n):          # FMA instructions
+                C[i][j] += A[i][k] * B[k][j]  # AVX-512 candidate
+    
+    return C
 
-// Fibonacci — exponential branching
-function fibonacciMemo(n: number, memo: Map<number,number> = new Map()): number {
-  if (n <= 1) return n;
-  if (memo.has(n)) return memo.get(n)!;
-  
-  const result = fibonacciMemo(n-1, memo) + fibonacciMemo(n-2, memo);
-  memo.set(n, result);
-  return result;
-}`,
-    timsort: `// TimSort Implementation — Hybrid O(n log n)
-const MIN_MERGE = 32;
+def fibonacci_memo(n, memo=None):
+    """Fibonacci — exponential branching"""
+    if memo is None:
+        memo = {}
+    
+    if n <= 1:
+        return n
+    if n in memo:
+        return memo[n]
+    
+    result = fibonacci_memo(n-1, memo) + fibonacci_memo(n-2, memo)
+    memo[n] = result
+    return result`,
+    timsort: `MIN_MERGE = 32
 
-function calcMinRun(n: number): number {
-  let r = 0;
-  while (n >= MIN_MERGE) {
-    r |= n & 1;  // Bitwise — extremely efficient
-    n >>= 1;
-  }
-  return n + r;
-}
+def calc_min_run(n):
+    r = 0
+    while n >= MIN_MERGE:
+        r |= n & 1  # Bitwise — extremely efficient
+        n >>= 1
+    return n + r
 
-function insertionSort(arr: number[], left: number, right: number): void {
-  for (let i = left + 1; i <= right; i++) {
-    const temp = arr[i];  // Register-friendly
-    let j = i - 1;
-    while (j >= left && arr[j] > temp) {
-      arr[j + 1] = arr[j];  // Sequential memory — cache optimal
-      j--;
-    }
-    arr[j + 1] = temp;
-  }
-}
+def insertion_sort(arr, left, right):
+    for i in range(left + 1, right + 1):
+        temp = arr[i]  # Register-friendly
+        j = i - 1
+        while j >= left and arr[j] > temp:
+            arr[j + 1] = arr[j]  # Sequential memory — cache optimal
+            j -= 1
+        arr[j + 1] = temp
 
-function timsortMerge(arr: number[], l: number, m: number, r: number): void {
-  const len1 = m - l + 1;
-  const len2 = r - m;
-  const left = arr.slice(l, l + len1);   // Minimal allocation
-  const right = arr.slice(m + 1, m + 1 + len2);
-  
-  let i = 0, j = 0, k = l;
-  while (i < len1 && j < len2) {
-    if (left[i] <= right[j]) {
-      arr[k++] = left[i++];  // Predictable branch
-    } else {
-      arr[k++] = right[j++]; // High branch accuracy
-    }
-  }
-  while (i < len1) arr[k++] = left[i++];
-  while (j < len2) arr[k++] = right[j++];
-}
+def timsort_merge(arr, l, m, r):
+    len1 = m - l + 1
+    len2 = r - m
+    left = arr[l:l + len1]      # Minimal allocation
+    right = arr[m + 1:m + 1 + len2]
+    
+    i = j = 0
+    k = l
+    while i < len1 and j < len2:
+        if left[i] <= right[j]:
+            arr[k] = left[i]    # Predictable branch
+            i += 1
+        else:
+            arr[k] = right[j]   # High branch accuracy
+            j += 1
+        k += 1
+    
+    while i < len1:
+        arr[k] = left[i]
+        i += 1
+        k += 1
+    
+    while j < len2:
+        arr[k] = right[j]
+        j += 1
+        k += 1
 
-function timSort(arr: number[]): number[] {
-  const n = arr.length;
-  const minRun = calcMinRun(n);
-  const result = [...arr];
-  
-  for (let i = 0; i < n; i += minRun) {
-    insertionSort(result, i, Math.min(i + minRun - 1, n - 1));
-  }
-  
-  for (let size = minRun; size < n; size *= 2) {
-    for (let left = 0; left < n; left += 2 * size) {
-      const mid = Math.min(left + size - 1, n - 1);
-      const right = Math.min(left + 2 * size - 1, n - 1);
-      if (mid < right) timsortMerge(result, left, mid, right);
-    }
-  }
-  return result;
-}`,
+def timsort(arr):
+    """TimSort Implementation — Hybrid O(n log n)"""
+    n = len(arr)
+    min_run = calc_min_run(n)
+    result = arr.copy()
+    
+    for i in range(0, n, min_run):
+        insertion_sort(result, i, min(i + min_run - 1, n - 1))
+    
+    size = min_run
+    while size < n:
+        for left in range(0, n, 2 * size):
+            mid = min(left + size - 1, n - 1)
+            right = min(left + 2 * size - 1, n - 1)
+            if mid < right:
+                timsort_merge(result, left, mid, right)
+        size *= 2
+    
+    return result`,
 };
 
 // ─── AST Nodes ──────────────────────────────────────────────────────────
 export const AST_NODES: ASTNode[] = [
-    { id: 'ast-001', lineStart: 2, lineEnd: 12, name: 'mergeSort', type: 'function', complexity: 2.5 },
+    { id: 'ast-001', lineStart: 2, lineEnd: 12, name: 'merge_sort', type: 'function', complexity: 2.5 },
     { id: 'ast-002', lineStart: 3, lineEnd: 3, name: 'base case check', type: 'condition', complexity: 1 },
     { id: 'ast-003', lineStart: 5, lineEnd: 7, name: 'array slicing', type: 'assignment', complexity: 2 },
     { id: 'ast-004', lineStart: 10, lineEnd: 11, name: 'recursive calls', type: 'call', complexity: 2.5 },
     { id: 'ast-005', lineStart: 15, lineEnd: 29, name: 'merge', type: 'function', complexity: 2 },
     { id: 'ast-006', lineStart: 20, lineEnd: 26, name: 'comparison loop', type: 'loop', complexity: 2 },
     { id: 'ast-007', lineStart: 21, lineEnd: 25, name: 'branch comparison', type: 'condition', complexity: 2 },
-    { id: 'ast-008', lineStart: 32, lineEnd: 43, name: 'matrixMultiply', type: 'function', complexity: 3 },
+    { id: 'ast-008', lineStart: 32, lineEnd: 43, name: 'matrix_multiply', type: 'function', complexity: 3 },
     { id: 'ast-009', lineStart: 36, lineEnd: 38, name: 'triple nested loop', type: 'loop', complexity: 3 },
-    { id: 'ast-010', lineStart: 46, lineEnd: 52, name: 'fibonacciMemo', type: 'function', complexity: 2 },
+    { id: 'ast-010', lineStart: 46, lineEnd: 52, name: 'fibonacci_memo', type: 'function', complexity: 2 },
 ];
 
 // ─── Synthetic Telemetry Generator ─────────────────────────────────────

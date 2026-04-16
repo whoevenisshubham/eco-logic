@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Send, Sparkles } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useTelemetryStore, type SemanticEnergyFingerprintNode } from '../store/useTelemetryStore';
 
 interface Message {
@@ -50,88 +51,22 @@ function createOptimizationPrompt(sourceCode: string, hotspots: HotspotSummary[]
     ].join('\n');
 }
 
-function generateMockAdvice(sourceCode: string, hotspots: HotspotSummary[]): string {
-    const hotspotHasQuadratic = hotspots.some((node) => node.complexity === 'O(N^2)' || node.complexity === 'O(2^N)');
-    const hasNestedLoops = /(for\s*\(|while\s*\().*(for\s*\(|while\s*\()/s.test(sourceCode);
-    const usesSlices = /\.slice\(|\.concat\(|new\s+Array\(/.test(sourceCode);
+const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+const geminiClient = geminiApiKey ? new GoogleGenerativeAI(geminiApiKey) : null;
 
-    const topNode = hotspots[0];
-    const primaryTarget = topNode ? `${topNode.nodeType} at line ${topNode.line}` : 'the current hotspot region';
+async function streamRealLlmResponse(prompt: string, onChunk: (chunk: string) => void): Promise<void> {
+    if (!geminiClient) {
+        throw new Error('Gemini API key is missing. Set VITE_GEMINI_API_KEY in your .env file.');
+    }
 
-    const baseHeader = `Energy hotspot detected at ${primaryTarget}.`;
+    const model = geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContentStream(prompt);
 
-    const complexityAdvice = hotspotHasQuadratic || hasNestedLoops
-        ? [
-            'Refactor strategy (loop pressure):',
-            '1. Collapse repeated nested scans into indexed lookups (Map/Set) to move from O(N^2) toward O(N).',
-            '2. Hoist invariant computations outside loops to reduce branch and arithmetic work per iteration.',
-            '3. If sorting is required repeatedly, pre-sort once and reuse order metadata instead of resorting.',
-        ].join('\n')
-        : [
-            'Refactor strategy (general efficiency):',
-            '1. Inline tiny helper calls inside hot loops only when profiler confirms call overhead dominates.',
-            '2. Pre-allocate output buffers to avoid repeated allocator pressure.',
-            '3. Replace repeated property access with local references inside critical loops.',
-        ].join('\n');
-
-    const memoryAdvice = usesSlices
-        ? [
-            '',
-            'Memory-access optimization:',
-            '- Replace repeated `.slice()`/`.concat()` allocations with a reusable scratch buffer.',
-            '- Prefer contiguous writes and sequential reads to improve cache locality.',
-        ].join('\n')
-        : '';
-
-    const codeSuggestion = hotspotHasQuadratic || hasNestedLoops
-        ? [
-            '',
-            'Concrete refactor sketch:',
-            '```ts',
-            '// Example: replace nested membership checks with O(1) index map',
-            'const index = new Map<number, number>();',
-            'for (let i = 0; i < input.length; i += 1) {',
-            '  index.set(input[i], i);',
-            '}',
-            '',
-            'for (let j = 0; j < queries.length; j += 1) {',
-            '  const pos = index.get(queries[j]);',
-            '  if (pos !== undefined) {',
-            '    output[j] = transform(input[pos]);',
-            '  }',
-            '}',
-            '```',
-        ].join('\n')
-        : [
-            '',
-            'Concrete refactor sketch:',
-            '```ts',
-            '// Example: remove transient arrays in hot path',
-            'const scratch = new Array<number>(input.length);',
-            'for (let i = 0; i < input.length; i += 1) {',
-            '  scratch[i] = fastTransform(input[i]);',
-            '}',
-            'return scratch;',
-            '```',
-        ].join('\n');
-
-    return [baseHeader, '', complexityAdvice, memoryAdvice, codeSuggestion].join('\n');
-}
-
-async function streamMockLlmResponse(
-    prompt: string,
-    sourceCode: string,
-    hotspots: HotspotSummary[],
-    onChunk: (chunk: string) => void
-): Promise<void> {
-    const response = `${generateMockAdvice(sourceCode, hotspots)}\n\nPrompt Context Size: ${prompt.length} chars.`;
-    const tokens = response.split(/(\s+)/).filter((token) => token.length > 0);
-
-    for (const token of tokens) {
-        onChunk(token);
-        await new Promise<void>((resolve) => {
-            setTimeout(resolve, token.trim().length <= 2 ? 22 : 40);
-        });
+    for await (const chunk of result.stream) {
+        const text = chunk.text();
+        if (text) {
+            onChunk(text);
+        }
     }
 }
 
@@ -174,21 +109,52 @@ export const GreenGenieChat: React.FC = () => {
         setMessages((previous) => [...previous, { id: assistantId, role: 'assistant', content: '' }]);
         setIsStreaming(true);
 
-        const prompt = createOptimizationPrompt(sourceCode, topHotspots);
+        const prompt = [
+            createOptimizationPrompt(sourceCode, topHotspots),
+            '',
+            `User request: ${trimmed}`,
+        ].join('\n');
 
         let streamedText = '';
-        await streamMockLlmResponse(prompt, sourceCode, topHotspots, (chunk) => {
-            streamedText += chunk;
+        try {
+            await streamRealLlmResponse(prompt, (chunk) => {
+                streamedText += chunk;
+                setMessages((previous) =>
+                    previous.map((message) =>
+                        message.id === assistantId
+                            ? { ...message, content: streamedText }
+                            : message
+                    )
+                );
+            });
+
+            if (!streamedText.trim()) {
+                setMessages((previous) =>
+                    previous.map((message) =>
+                        message.id === assistantId
+                            ? {
+                                ...message,
+                                content: 'No response was returned by Gemini. Please try again with a more specific prompt.',
+                            }
+                            : message
+                    )
+                );
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to reach Gemini API.';
             setMessages((previous) =>
                 previous.map((message) =>
                     message.id === assistantId
-                        ? { ...message, content: streamedText }
+                        ? {
+                            ...message,
+                            content: `Unable to generate optimization guidance right now.\n\n${errorMessage}`,
+                        }
                         : message
                 )
             );
-        });
-
-        setIsStreaming(false);
+        } finally {
+            setIsStreaming(false);
+        }
     };
 
     const canSend = isRunning && !isAnalyzing && sourceCode.trim().length > 0;

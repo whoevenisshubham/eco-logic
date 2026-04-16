@@ -16,4 +16,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['d3', 'framer-motion', 'zustand'],
   },
+  server: {
+    middlewareMode: false,
+  },
 })

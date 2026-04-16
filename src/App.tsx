@@ -231,14 +231,14 @@ const App: React.FC = () => {
         >
           <span style={{ color: '#3a6b8a' }}>EcoLogic Research v2.0</span>
           <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Live · Differential · Flame · Sunburst · Scatter · Enterprise</span>
+          <span style={{ color: '#3a6b8a' }}>Live ï¿½ Differential ï¿½ Flame ï¿½ Sunburst ï¿½ Scatter ï¿½ Enterprise</span>
           <span style={{ color: '#1a3a5c' }}>|</span>
-          <span style={{ color: '#3a6b8a' }}>Intel i9-14900K · 64GB DDR5</span>
+          <span style={{ color: '#3a6b8a' }}>Intel i9-14900K ï¿½ 64GB DDR5</span>
           <div className="flex-1" />
           <span style={{ color: 'rgba(0,212,255,0.5)' }}>Deep-Link Traceability</span>
-          <span style={{ color: '#1a3a5c' }}>•</span>
+          <span style={{ color: '#1a3a5c' }}>ï¿½</span>
           <span style={{ color: 'rgba(0,255,136,0.5)' }}>Semantic Energy Fingerprints</span>
-          <span style={{ color: '#1a3a5c' }}>•</span>
+          <span style={{ color: '#1a3a5c' }}>ï¿½</span>
           <span style={{ color: 'rgba(180,79,255,0.5)' }}>Differential Profiling</span>
         </div>
       </div>

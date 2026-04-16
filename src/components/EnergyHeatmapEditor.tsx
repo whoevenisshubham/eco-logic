@@ -3,8 +3,20 @@ import Editor, { type Monaco } from '@monaco-editor/react';
 import type * as MonacoEditor from 'monaco-editor';
 import { motion } from 'framer-motion';
 import { useTelemetryStore } from '../store/useTelemetryStore';
-import { ALGORITHM_CODE } from '../engine/SimulatedDataEngine';
-import { Database, GitBranch, Thermometer, Zap } from 'lucide-react';
+import { Database, GitBranch, Loader2, Thermometer, Zap } from 'lucide-react';
+
+// Configure Monaco to use CDN
+if (typeof window !== 'undefined' && !window.MonacoEnvironment) {
+  window.MonacoEnvironment = {
+    getWorkerUrl: (_moduleId: string, label: string) => {
+      if (label === 'json') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/json/json.worker.js';
+      if (label === 'css' || label === 'scss' || label === 'less') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/css/css.worker.js';
+      if (label === 'html' || label === 'handlebars' || label === 'razor') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/html/html.worker.js';
+      if (label === 'typescript' || label === 'javascript') return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/language/typescript/ts.worker.js';
+      return 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/editor/editor.worker.js';
+    }
+  };
+}
 
 const HARDWARE_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
     thermal_throttle: { icon: <Thermometer size={10} />, color: '#ff3366' },
@@ -19,9 +31,23 @@ export const EnergyHeatmapEditor: React.FC = () => {
     const monacoRef = useRef<Monaco | null>(null);
     const decorationsRef = useRef<string[]>([]);
 
-    const { selectedLineId, energyMap, hardwareEvents, algorithmA, isRunning } = useTelemetryStore();
+    const {
+        selectedLineId,
+        energyMap,
+        hardwareEvents,
+        isRunning,
+        isAnalyzing,
+        sourceCode,
+        setSourceCode,
+        analyzeCode,
+    } = useTelemetryStore();
 
-    const code = ALGORITHM_CODE[algorithmA] ?? ALGORITHM_CODE.mergesort;
+    const clearDecorations = useCallback(() => {
+        if (!editorRef.current) {
+            return;
+        }
+        decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, []);
+    }, []);
 
     const buildDecorations = useCallback(() => {
         if (!editorRef.current || !monacoRef.current || !isRunning) {
@@ -83,6 +109,15 @@ export const EnergyHeatmapEditor: React.FC = () => {
         buildDecorations();
     }, [buildDecorations]);
 
+    const handleEditorChange = useCallback((value: string | undefined) => {
+        setSourceCode(value ?? '');
+        clearDecorations();
+    }, [clearDecorations, setSourceCode]);
+
+    const handleRunProfiling = useCallback(() => {
+        void analyzeCode(sourceCode);
+    }, [analyzeCode, sourceCode]);
+
     const eventsByLine = useMemo(() => {
         const map = new Map<number, typeof hardwareEvents>();
         hardwareEvents.forEach((event) => {
@@ -92,13 +127,22 @@ export const EnergyHeatmapEditor: React.FC = () => {
         return map;
     }, [hardwareEvents]);
 
-    const totalLines = code.split('\n').length;
+    const totalLines = Math.max(1, sourceCode.split('\n').length);
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header flex-none">
                 <div className="flex items-center gap-3">
                     <span className="panel-title">Energy Heatmap Editor</span>
+                    <button
+                        type="button"
+                        onClick={handleRunProfiling}
+                        disabled={isAnalyzing || sourceCode.trim().length === 0}
+                        className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[11px] font-semibold tracking-wide text-cyber-bg bg-cyber-accent hover:bg-cyber-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_0_16px_rgba(0,255,136,0.35)]"
+                    >
+                        {isAnalyzing ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+                        {isAnalyzing ? 'Profiling...' : 'Run Semantic Profiling'}
+                    </button>
                     {isRunning && (
                         <div className="flex items-center gap-2 text-xs">
                             <span className="w-3 h-1.5 rounded bg-energy-critical inline-block" />
@@ -113,7 +157,7 @@ export const EnergyHeatmapEditor: React.FC = () => {
                     )}
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-cyber-text-muted">{algorithmA}.ts</span>
+                    <span className="text-[10px] font-mono text-cyber-text-muted">input.py</span>
                     {selectedLineId && (
                         <motion.span
                             initial={{ opacity: 0, x: 10 }}
@@ -131,11 +175,12 @@ export const EnergyHeatmapEditor: React.FC = () => {
                 <div className="flex-1 overflow-hidden">
                     <Editor
                         theme="vs-dark"
-                        language="typescript"
-                        value={code}
+                        language="python"
+                        value={sourceCode}
+                        onChange={handleEditorChange}
                         onMount={handleEditorMount}
                         options={{
-                            readOnly: true,
+                            readOnly: false,
                             minimap: { enabled: true },
                             fontSize: 13,
                             lineHeight: 22,

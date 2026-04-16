@@ -1,4 +1,4 @@
-# 🌱 Eco-Logic: Industry-Level Software Energy Profiler
+# Eco-Logic: Algorithm-Level Power Profiling for Energy-Efficient Software Systems
 
 ![Eco-Logic Preview](https://github.com/whoevenisshubham/eco-logic/assets/demo-placeholder.png) <!-- Note: Replace with actual screenshot path if available later -->
 
