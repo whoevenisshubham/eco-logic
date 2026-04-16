@@ -165,8 +165,26 @@ const GlobalAnalyzeOverlay: React.FC = () => (
   </motion.div>
 );
 
+const ErrorNotification: React.FC<{ error: string }> = ({ error }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: 20 }}
+    transition={{ duration: 0.3 }}
+    className="fixed bottom-6 right-6 z-50 max-w-sm rounded-lg border border-energy-critical/50 bg-cyber-surface/95 p-4 shadow-2xl backdrop-blur-sm"
+  >
+    <div className="flex items-start gap-3">
+      <div className="w-2 h-2 rounded-full bg-energy-critical flex-shrink-0 mt-1" />
+      <div>
+        <div className="text-xs font-semibold text-energy-critical mb-1">Analysis Error</div>
+        <div className="text-xs text-cyber-text-secondary font-mono leading-relaxed">{error}</div>
+      </div>
+    </div>
+  </motion.div>
+);
+
 const App: React.FC = () => {
-  const { mode, isAnalyzing } = useTelemetryStore();
+  const { mode, isAnalyzing, analysisError } = useTelemetryStore();
   const layout = LAYOUTS[mode] ?? LAYOUTS.live;
 
   const [gridWidth, setGridWidth] = React.useState(window.innerWidth);
@@ -222,6 +240,7 @@ const App: React.FC = () => {
 
           <AnimatePresence>
             {isAnalyzing && <GlobalAnalyzeOverlay />}
+            {analysisError && <ErrorNotification error={analysisError} />}
           </AnimatePresence>
         </main>
 
