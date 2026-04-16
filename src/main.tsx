@@ -1,18 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { loader } from '@monaco-editor/react'
-import './index.css'
-import App from './App.tsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 
-// Configure Monaco Editor to use local files from the public directory
-loader.config({
-  paths: {
-    vs: '/monaco-editor/vs',
-  },
-})
+// Removed the custom local loader.config. 
+// @monaco-editor/react will now automatically and safely load from the CDN.
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
-)
+  </React.StrictMode>,
+);
