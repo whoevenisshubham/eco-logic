@@ -82,8 +82,8 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .attr('x2', 0)
             .attr('y2', height);
 
-        gradientA.append('stop').attr('offset', '0%').attr('stop-color', '#6366f1').attr('stop-opacity', 0.3);
-        gradientA.append('stop').attr('offset', '100%').attr('stop-color', '#6366f1').attr('stop-opacity', 0.01);
+        gradientA.append('stop').attr('offset', '0%').attr('stop-color', '#4f46e5').attr('stop-opacity', 0.3);
+        gradientA.append('stop').attr('offset', '100%').attr('stop-color', '#4f46e5').attr('stop-opacity', 0.01);
 
         const gradientB = defs
             .append('linearGradient')
@@ -123,7 +123,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
             .append('path')
             .datum(dataA)
             .attr('fill', 'none')
-            .attr('stroke', '#6366f1')
+            .attr('stroke', '#4f46e5')
             .attr('stroke-width', 1.5)
             .attr('d', lineGenerator)
             .attr('filter', 'drop-shadow(0 0 4px rgba(59,130,246,0.4))');
@@ -234,7 +234,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                 tooltip.style.left = `${event.clientX - parentRect.left}px`;
                 tooltip.style.top = `${event.clientY - parentRect.top}px`;
                 tooltip.innerHTML = [
-                    `<div class=\"tooltip-title\"><span>${closest.functionName}</span> <span class=\"text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeSequenceIndex.toFixed(0)}</span></div>`,
+                    `<div class="tooltip-title text-slate-700 font-semibold mb-1"><span>${closest.functionName}</span> <span class=\"text-xs bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeSequenceIndex.toFixed(0)}</span></div>`,
                     `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Energy</span> <span class=\"text-indigo-600 font-bold\">${closest.energy.toFixed(3)}J</span></div>`,
                     `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Src Line</span> <span class=\"text-amber-600\">${closest.lineId}</span></div>`,
                 ].join('');
@@ -270,7 +270,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
         g.append('g').call(brush);
 
         const legend = g.append('g').attr('transform', `translate(${width - 150}, 4)`);
-        legend.append('line').attr('x1', 0).attr('x2', 20).attr('stroke', '#6366f1').attr('stroke-width', 2).attr('y1', 6).attr('y2', 6);
+        legend.append('line').attr('x1', 0).attr('x2', 20).attr('stroke', '#4f46e5').attr('stroke-width', 2).attr('y1', 6).attr('y2', 6);
         legend.append('text').attr('x', 24).attr('y', 10).attr('fill', '#64748b').attr('font-size', '10px').text('Primary');
 
         if (showBoth && dataB.length > 0) {
@@ -304,7 +304,7 @@ export const TimeSeriesEnergyChart: React.FC = () => {
                     >
                         Compare Diff
                     </button>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">Interactive</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">Interactive</span>
                 </div>
             </div>
 

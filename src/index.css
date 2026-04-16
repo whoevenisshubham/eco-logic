@@ -37,9 +37,9 @@ html, body, #root {
 
 /* ─── Panel & UI Components ───────────────────────────────────────────── */
 @layer components {
-  .glass-panel { @apply bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-2xl overflow-hidden flex flex-col; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02); }
+  .glass-panel { @apply bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col; }
   
-  .glass-panel-bright { @apply bg-white backdrop-blur-xl border border-indigo-100/60 rounded-2xl overflow-hidden flex flex-col; box-shadow: 0 8px 30px rgba(99, 102, 241, 0.05), 0 2px 5px rgba(99, 102, 241, 0.03); }
+  .glass-panel-bright { @apply bg-white border border-indigo-200 shadow-sm rounded-xl overflow-hidden flex flex-col; }
   
   .btn {
     @apply px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 border;
@@ -151,7 +151,7 @@ html, body, #root {
 
 /* ─── Monaco Editor Override ─────────────────────────────────────────── */
 .monaco-editor { border-radius: 0 0 12px 12px !important; }
-.monaco-editor .margin { background: #080f1a !important; }
+.monaco-editor .margin { background: #ffffff !important; }
 .monaco-editor-container { height: 100%; }
 
 /* ─── D3 Chart Styles ────────────────────────────────────────────────── */

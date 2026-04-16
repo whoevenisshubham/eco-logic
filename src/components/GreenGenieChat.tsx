@@ -76,13 +76,46 @@ const INITIAL_ASSISTANT_MESSAGE: Message = {
     content: 'Green-Genie ready. Run analysis, then ask for joule-focused refactors and I will target the top AST hotspots.',
 };
 
+const ChatMessageContent: React.FC<{ content: string; role: 'user' | 'assistant'; onApplyCode: (code: string) => void }> = ({ content, role, onApplyCode }) => {
+    if (role === 'user') {
+        return <span className="whitespace-pre-wrap">{content}</span>;
+    }
+
+    const parts = content.split(/(```[\s\S]*?```)/g);
+
+    return (
+        <div className="whitespace-pre-wrap">
+            {parts.map((part, index) => {
+                if (part.startsWith('```') && part.endsWith('```')) {
+                    const match = part.match(/```(\w*)\n([\s\S]*?)```/);
+                    const code = match ? match[2].trim() : part.slice(3, -3).trim();
+                    
+                    return (
+                        <div key={index} className="relative my-3 group rounded-md bg-slate-50 border border-slate-200 p-3 overflow-x-auto font-mono text-[13px] leading-relaxed shadow-sm">
+                            <button
+                                onClick={() => onApplyCode(code)}
+                                title="Apply to Editor"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs px-2 py-1 rounded shadow-sm font-sans font-medium"
+                            >
+                                Apply to Editor
+                            </button>
+                            <pre className="text-slate-800 m-0 p-0 block">{code}</pre>
+                        </div>
+                    );
+                }
+                return <span key={index}>{part}</span>;
+            })}
+        </div>
+    );
+};
+
 export const GreenGenieChat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([INITIAL_ASSISTANT_MESSAGE]);
     const [input, setInput] = useState('');
     const [isStreaming, setIsStreaming] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const { sourceCode, astTree, isRunning, isAnalyzing } = useTelemetryStore();
+    const { sourceCode, setSourceCode, astTree, isRunning, isAnalyzing } = useTelemetryStore();
 
     const topHotspots = useMemo(() => buildTopHotspots(astTree), [astTree]);
 
@@ -199,16 +232,24 @@ export const GreenGenieChat: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className={`flex flex-col gap-1 w-full mt-2 ${message.role === 'user' ? 'items-end' : 'items-start'}`}
                     >
-                        {message.role === 'user' && <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest pl-1 pr-1">You</span>}
-                        {message.role === 'assistant' && <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>}
+                        {message.role === 'user' && <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest pl-1 pr-1">You</span>}
+                        {message.role === 'assistant' && <span className="text-xs font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>}
                         
                         <div
-                            className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap ${message.role === 'user'
+                            className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-[14px] leading-relaxed ${message.role === 'user'
                                 ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md'
                                 : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm'
                                 }`}
                         >
-                            {message.content || (message.role === 'assistant' ? '...' : '')}
+                            {message.content ? (
+                                <ChatMessageContent 
+                                    content={message.content} 
+                                    role={message.role} 
+                                    onApplyCode={setSourceCode} 
+                                />
+                            ) : (
+                                message.role === 'assistant' ? '...' : ''
+                            )}
                         </div>
                     </motion.div>
                 ))}
@@ -221,7 +262,7 @@ export const GreenGenieChat: React.FC = () => {
                             exit={{ opacity: 0 }}
                             className="flex flex-col gap-1 items-start w-full mt-2"
                         >
-                            <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>
+                            <span className="text-xs font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>
                             <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 shadow-sm">
                                 <Loader2 size={14} className="text-indigo-600 animate-spin" />
                                 <span className="text-[13px] text-slate-500 font-medium">Streaming optimization guidance...</span>

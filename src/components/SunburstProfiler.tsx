@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { motion } from 'framer-motion';
 import { useTelemetryStore, type SemanticEnergyFingerprintNode } from '../store/useTelemetryStore';
 
-const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#f97316', '#0ea5e9', '#f43f5e', '#0ea5e9', '#059669'];
+const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#f97316', '#0ea5e9', '#f43f5e', '#0ea5e9', '#059669'];
 
 interface SunburstDatum {
     name: string;

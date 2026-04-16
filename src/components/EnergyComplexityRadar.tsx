@@ -17,7 +17,7 @@ export const EnergyComplexityRadar: React.FC = () => {
         <div className="h-full flex flex-col overflow-hidden">
             <div className="panel-header drag-handle cursor-grab active:cursor-grabbing">
                 <span className="panel-title">Energy vs. Complexity Radar</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Footprint</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Footprint</span>
             </div>
             {/* FIX: Added min-h-0 min-w-0 to prevent flex layout collapse during grid resize */}
             <div className="flex-1 p-5 min-h-0 min-w-0">
@@ -28,10 +28,10 @@ export const EnergyComplexityRadar: React.FC = () => {
                             <PolarGrid stroke="#e2e8f0" strokeWidth={1.5} />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
                             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                            <Radar name="Primary Execution" dataKey="A" stroke="#6366f1" strokeWidth={2.5} fill="#6366f1" fillOpacity={0.15} />
+                            <Radar name="Primary Execution" dataKey="A" stroke="#4f46e5" strokeWidth={2.5} fill="#4f46e5" fillOpacity={0.15} />
                             <Tooltip 
-                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05)', color: '#334155', padding: '12px', fontWeight: 500, fontSize: '12px' }} 
-                                itemStyle={{ color: '#6366f1', fontWeight: 700 }} 
+                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', color: '#334155', padding: '12px', fontWeight: 500, fontSize: '12px' }} 
+                                itemStyle={{ color: '#4f46e5', fontWeight: 700 }} 
                             />
                         </RadarChart>
                     </ResponsiveContainer>

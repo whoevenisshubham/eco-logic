@@ -36,9 +36,9 @@ export const NavBar: React.FC = () => {
             <div className="flex items-center gap-6">
                 {isRunning && (
                     <div className="flex items-center gap-6 mr-4 text-sm font-medium">
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Total Energy</span><span className="text-orange-500">{totalEnergyA.toFixed(2)} J</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Peak Power</span><span className="text-rose-500">{peakPowerA.toFixed(1)} W</span></div>
-                        <div className="flex flex-col"><span className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Avg Cache Hit</span><span className="text-emerald-500">{(avgCacheHitA * 100).toFixed(1)}%</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Total Energy</span><span className="text-orange-500">{totalEnergyA.toFixed(2)} J</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Peak Power</span><span className="text-rose-500">{peakPowerA.toFixed(1)} W</span></div>
+                        <div className="flex flex-col"><span className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Avg Cache Hit</span><span className="text-emerald-500">{(avgCacheHitA * 100).toFixed(1)}%</span></div>
                     </div>
                 )}
                 {isRunning ? (
@@ -57,7 +57,7 @@ export const NavBar: React.FC = () => {
 
 const Stat: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
     <div className="flex flex-col items-center">
-        <span className="text-[9px] text-gray-600 tracking-widest">{label}</span>
+        <span className="text-xs text-gray-600 tracking-widest">{label}</span>
         <span className={`${color} font-bold`}>{value}</span>
     </div>
 );

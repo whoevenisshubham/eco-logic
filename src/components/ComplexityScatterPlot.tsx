@@ -155,7 +155,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
             .attr('cx', (point) => xScale(point.complexity) ?? 0)
             .attr('cy', (point) => yScale(point.totalEnergy))
             .attr('r', (_, index) => (index === newestIndex ? 8 : 5))
-            .attr('fill', (_, index) => (index === newestIndex ? '#6366f1' : 'rgba(59,130,246,0.4)'))
+            .attr('fill', (_, index) => (index === newestIndex ? '#4f46e5' : 'rgba(59,130,246,0.4)'))
             .attr('stroke', '#fffffffff')
             .attr('stroke-width', (_, index) => (index === newestIndex ? 1.4 : 0.8))
             .on('mousemove', (event, point) => {

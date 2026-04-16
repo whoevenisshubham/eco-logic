@@ -44,10 +44,10 @@ export const EnergyHeatmapEditor: React.FC = () => {
             }
 
             const ratio = mapping.energy / maxEnergy;
-            let className = 'heatmap-line-low';
+            let className = 'bg-emerald-50 border-l-4 border-emerald-300';
             if (ratio > 0.85) className = 'bg-rose-50 border-l-4 border-rose-400';
-            else if (ratio > 0.6) className = 'bg-amber-50 border-l-4 border-amber-400';
-            else if (ratio > 0.35) className = 'heatmap-line-medium';
+            else if (ratio > 0.6) className = 'bg-orange-50 border-l-4 border-orange-400';
+            else if (ratio > 0.35) className = 'bg-amber-50 border-l-4 border-amber-400';
 
             const maxColumn = editor.getModel()?.getLineMaxColumn(lineId) || 1;
 
@@ -107,10 +107,10 @@ export const EnergyHeatmapEditor: React.FC = () => {
                         type="button"
                         onClick={handleRunProfiling}
                         disabled={isAnalyzing || sourceCode.trim().length === 0}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-bold shadow-sm border border-indigo-600 bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-md active:scale-95"
+                        className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} fill="currentColor" />}
-                        {isAnalyzing ? 'Profiling...' : 'Run Analysis'}
+                        {isAnalyzing ? 'Profiling...' : 'Run Semantic Profiling'}
                     </button>
                     {isRunning && (
                         <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider ml-2">
