@@ -16,27 +16,28 @@ export const EnergyComplexityRadar: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">Energy/Complexity Radar</span>
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing">
+                <span className="panel-title">Energy vs. Complexity Radar</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Footprint</span>
             </div>
             {/* FIX: Added min-h-0 min-w-0 to prevent flex layout collapse during grid resize */}
-            <div className="flex-1 p-2 min-h-0 min-w-0">
+            <div className="flex-1 p-5 min-h-0 min-w-0">
                 {isRunning ? (
                     /* FIX: Added minWidth and minHeight to silence the Recharts -1 warning */
                     <ResponsiveContainer width="100%" height="100%" minWidth={10} minHeight={10}>
-                        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                            <PolarGrid stroke="#e2e8f0" />
-                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }} />
+                        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                            <PolarGrid stroke="#e2e8f0" strokeWidth={1.5} />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
                             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                            <Radar name="Primary Execution" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} />
+                            <Radar name="Primary Execution" dataKey="A" stroke="#6366f1" strokeWidth={2.5} fill="#6366f1" fillOpacity={0.15} />
                             <Tooltip 
-                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', color: '#334155', padding: '12px' }} 
-                                itemStyle={{ color: '#6366f1' }} 
+                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05)', color: '#334155', padding: '12px', fontWeight: 500, fontSize: '12px' }} 
+                                itemStyle={{ color: '#6366f1', fontWeight: 700 }} 
                             />
                         </RadarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-gray-500 font-mono">
+                    <div className="h-full flex items-center justify-center text-[13px] text-slate-400 font-medium">
                         Run analysis to view footprint radar
                     </div>
                 )}

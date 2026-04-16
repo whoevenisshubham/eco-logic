@@ -231,16 +231,14 @@ export const TimeSeriesEnergyChart: React.FC = () => {
 
                 const parentRect = host.getBoundingClientRect();
                 tooltip.style.display = 'block';
-                tooltip.style.left = `${event.clientX - parentRect.left + 14}px`;
-                tooltip.style.top = `${event.clientY - parentRect.top - 10}px`;
+                tooltip.style.left = `${event.clientX - parentRect.left}px`;
+                tooltip.style.top = `${event.clientY - parentRect.top}px`;
                 tooltip.innerHTML = [
-                    `<div class=\"text-blue-700 font-bold\">${closest.functionName}</div>`,
-                    `<div>Energy: <span class=\"text-orange-500\">${closest.energy.toFixed(3)}J</span></div>`,
-                    `<div>CPU: <span class=\"text-red-500\">${closest.cpuCore.toFixed(1)}W</span></div>`,
-                    `<div>DRAM: <span class=\"text-indigo-600\">${closest.dramLatency.toFixed(1)}ns</span></div>`,
-                    `<div>Cache: <span class=\"text-emerald-600\">${(closest.cacheHitRate * 100).toFixed(1)}%</span></div>`,
-                    `<div>Line: <span class=\"text-amber-500\">${closest.lineId}</span></div>`,
-                    `<div class=\"text-xs text-gray-500\">Node: ${closest.nodeIndex.toFixed(0)}</div>`,
+                    `<div class=\"tooltip-title\"><span>${closest.functionName}</span> <span class=\"text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded\">Node ${closest.nodeIndex.toFixed(0)}</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Energy</span> <span class=\"text-indigo-600 font-bold\">${closest.energy.toFixed(3)}J</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">CPU Pwr</span> <span class=\"text-rose-500\">${closest.cpuCore.toFixed(1)}W</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Cache Hit</span> <span class=\"text-emerald-500\">${(closest.cacheHitRate * 100).toFixed(1)}%</span></div>`,
+                    `<div class=\"tooltip-row\"><span class=\"tooltip-label\">Src Line</span> <span class=\"text-amber-600\">${closest.lineId}</span></div>`,
                 ].join('');
             })
             .on('mouseleave', () => {
@@ -299,20 +297,20 @@ export const TimeSeriesEnergyChart: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">AST Node Sequence Energy</span>
-                <div className="flex items-center gap-2">
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing">
+                <span className="panel-title">AST Node Energy Trace</span>
+                <div className="flex items-center gap-3">
                     <button
                         onClick={() => setShowBoth((previous) => !previous)}
-                        className={`text-xs px-2 py-1 rounded border transition-colors ${showBoth ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-gray-50/40 text-gray-500'}`}
+                        className={`text-[12px] font-semibold px-3 py-1.5 rounded-full border transition-all ${showBoth ? 'border-emerald-200 text-emerald-700 bg-emerald-50 shadow-sm' : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
                     >
-                        Compare
+                        Compare Diff
                     </button>
-                    <span className="text-[10px] font-mono text-gray-500">Click spike {'->'} jump to code</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">Interactive</span>
                 </div>
             </div>
 
-            <div ref={containerRef} className="flex-1 relative overflow-hidden">
+            <div ref={containerRef} className="flex-1 relative overflow-hidden bg-white">
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex items-center justify-center">
                         <div className="w-2/3 max-w-sm space-y-2">

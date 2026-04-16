@@ -123,14 +123,14 @@ const CyberBackground: React.FC = () => (
     <div
       className="absolute inset-0"
       style={{
-        backgroundImage: 'linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
       }}
     />
-    <div className="absolute top-0 left-0 w-96 h-96 rounded-full opacity-30"
-      style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)', transform: 'translate(-50%,-50%)' }} />
-    <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-30"
-      style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)', transform: 'translate(50%,50%)' }} />
+    <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-40 blur-[100px]"
+      style={{ background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)', transform: 'translate(30%,-30%)' }} />
+    <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-40 blur-[120px]"
+      style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)', transform: 'translate(-30%,30%)' }} />
   </div>
 );
 
@@ -193,25 +193,25 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#020408' }}>
+      <div className="h-screen flex flex-col overflow-hidden bg-slate-50 transition-colors duration-500">
         <CyberBackground />
         <NavBar />
 
-        <main className="flex-1 relative overflow-hidden">
+        <main className="flex-1 relative overflow-hidden" style={{ background: '#f8fafc' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={mode}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 overflow-auto p-2"
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 overflow-auto p-4 md:p-6 lg:p-8"
             >
               <DashboardGrid
                 layout={layout}
                 rowHeight={rowHeight}
-                width={gridWidth - 16}
-                margin={[16, 16]}
+                width={gridWidth - 32}
+                margin={[24, 24]}
                 containerPadding={[0, 0]}
                 draggableHandle=".drag-handle"
                 isDraggable={true}
@@ -239,19 +239,16 @@ const App: React.FC = () => {
         </main>
 
         <div
-          className="flex-none h-6 flex items-center px-4 gap-4 text-xs font-mono border-t border-slate-200 bg-white"
+          className="flex-none h-8 flex items-center px-6 gap-5 text-[11px] font-medium tracking-wide text-slate-500 border-t border-slate-200/80 bg-white/95 backdrop-blur-sm z-10"
         >
-          <span className="text-slate-500">EcoLogic Research v2.0</span>
+          <span className="font-semibold text-slate-700">EcoLogic Research v2.0</span>
           <span className="text-slate-300">|</span>
-          <span className="text-slate-500">Live  Differential  Flame  Sunburst  Scatter  Enterprise</span>
+          <span>Workspace Connected</span>
           <span className="text-slate-300">|</span>
-          <span className="text-slate-500">Intel i9-14900K  64GB DDR5</span>
+          <span>Node.js Environment</span>
           <div className="flex-1" />
-          <span className="text-indigo-500">Deep-Link Traceability</span>
-          <span className="text-gray-300"></span>
-          <span className="text-emerald-500">Semantic Energy Fingerprints</span>
-          <span className="text-gray-300"></span>
-          <span className="text-purple-500">Differential Profiling</span>
+          <span className="text-indigo-600 flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500"/> Deep-Link Traceability</span>
+          <span className="text-emerald-600 flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/> Semantic Energy Finder</span>
         </div>
       </div>
     </ErrorBoundary>

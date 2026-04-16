@@ -161,27 +161,33 @@ export const GreenGenieChat: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="border-b border-gray-100 bg-gray-50/50 px-4 py-3 flex items-center justify-between drag-handle">
-                <div className="flex items-center gap-2">
-                    <Sparkles size={14} className="text-amber-500" style={{ filter: 'drop-shadow(0 0 2px #f59e0b)' }} />
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing">
+                <div className="flex items-center gap-2.5">
+                    <Sparkles size={16} className="text-amber-500" style={{ filter: 'drop-shadow(0 0 2px rgba(245,158,11,0.4))' }} />
                     <span className="panel-title">Green-Genie AI</span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500">Semantic Energy Refactor Assistant</span>
+                <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/60 tracking-wide">Semantic Refactor Assistant</span>
             </div>
 
-            <div className="flex-none px-3 py-2 border-b border-slate-200 text-xs font-mono text-slate-500">
-                {topHotspots.length > 0
-                    ? `Top hotspots: ${topHotspots.map((node) => `L${node.line}`).join(', ')}`
-                    : 'No hotspots yet. Run analysis first.'}
+            <div className="flex-none px-5 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between shadow-[inset_0_-1px_2px_rgba(0,0,0,0.02)]">
+                <span className="text-[11px] font-semibold text-slate-500 tracking-wider uppercase">Active Targets:</span>
+                <span className="text-[12px] font-mono font-medium text-rose-500 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                    {topHotspots.length > 0
+                        ? `${topHotspots.map((node) => `L${node.line}`).join(', ')}`
+                        : 'None. Run analysis first.'}
+                </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-3 py-2 space-y-3 relative">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 relative custom-scrollbar">
                 {isAnalyzing && (
                     <div className="absolute inset-0 z-20 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                        <div className="w-2/3 max-w-md space-y-2">
-                            <div className="h-3 rounded bg-gray-900 animate-pulse" />
-                            <div className="h-3 rounded bg-gray-900 animate-pulse w-11/12" />
-                            <p className="text-center text-xs font-mono text-indigo-600">Extracting top AST energy hotspots...</p>
+                        <div className="w-3/4 max-w-md p-6 bg-white border border-indigo-100 shadow-xl rounded-2xl space-y-3">
+                            <div className="flex flex-col gap-2">
+                                <div className="h-2 rounded-full bg-slate-200 animate-pulse" />
+                                <div className="h-2 rounded-full bg-slate-200 animate-pulse w-4/5" />
+                                <div className="h-2 rounded-full bg-slate-200 animate-pulse w-3/5" />
+                            </div>
+                            <p className="text-center textxs font-semibold text-indigo-600 mt-4 tracking-wide">Extracting top AST energy hotspots...</p>
                         </div>
                     </div>
                 )}
@@ -191,21 +197,15 @@ export const GreenGenieChat: React.FC = () => {
                         key={message.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`flex gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        className={`flex flex-col gap-1 w-full mt-2 ${message.role === 'user' ? 'items-end' : 'items-start'}`}
                     >
-                        {message.role === 'assistant' && (
-                            <div
-                                className="flex-none w-6 h-6 rounded-full flex items-center justify-center mt-1"
-                                style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)' }}
-                            >
-                                <Sparkles size={10} className="text-amber-500" />
-                            </div>
-                        )}
-
+                        {message.role === 'user' && <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest pl-1 pr-1">You</span>}
+                        {message.role === 'assistant' && <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>}
+                        
                         <div
-                            className={`max-w-[88%] rounded-xl px-3 py-2 text-xs leading-5 whitespace-pre-wrap ${message.role === 'user'
-                                ? 'bg-indigo-50 text-indigo-900 rounded-2xl rounded-tr-sm shadow-sm text-right border-0'
-                                : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm shadow-sm'
+                            className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap ${message.role === 'user'
+                                ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md'
+                                : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm'
                                 }`}
                         >
                             {message.content || (message.role === 'assistant' ? '...' : '')}
@@ -219,17 +219,12 @@ export const GreenGenieChat: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex gap-2"
+                            className="flex flex-col gap-1 items-start w-full mt-2"
                         >
-                            <div
-                                className="flex-none w-6 h-6 rounded-full flex items-center justify-center"
-                                style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)' }}
-                            >
-                                <Sparkles size={10} className="text-amber-500" />
-                            </div>
-                            <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white border border-slate-200">
-                                <Loader2 size={12} className="text-indigo-600 animate-spin" />
-                                <span className="text-xs text-slate-500 font-mono">Streaming optimization guidance...</span>
+                            <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest pl-1 pr-1">Green-Genie</span>
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 shadow-sm">
+                                <Loader2 size={14} className="text-indigo-600 animate-spin" />
+                                <span className="text-[13px] text-slate-500 font-medium">Streaming optimization guidance...</span>
                             </div>
                         </motion.div>
                     )}
@@ -238,7 +233,7 @@ export const GreenGenieChat: React.FC = () => {
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="flex-none px-3 pb-2 flex flex-wrap gap-1">
+            <div className="flex-none px-5 pb-3 pt-2 bg-gradient-to-t from-white via-white to-transparent flex flex-wrap gap-2">
                 {[
                     'Focus on O(N^2) hotspots',
                     'Reduce memory allocations',
@@ -247,15 +242,15 @@ export const GreenGenieChat: React.FC = () => {
                     <button
                         key={prompt}
                         onClick={() => setInput(prompt)}
-                        className="text-[10px] px-2 py-1 rounded-full border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-blue-300 transition-colors"
+                        className="text-[11px] font-medium px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all shadow-sm active:scale-95"
                     >
                         {prompt}
                     </button>
                 ))}
             </div>
 
-            <div className="flex-none px-3 pb-3">
-                <div className="flex gap-2 p-1 rounded-xl border border-slate-200" style={{ background: '#ffffff' }}>
+            <div className="flex-none px-5 pb-5 bg-white">
+                <div className="flex gap-3 p-1.5 rounded-2xl border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-indigo-400 focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1)] transition-all">
                     <input
                         value={input}
                         onChange={(event) => setInput(event.target.value)}
@@ -264,18 +259,18 @@ export const GreenGenieChat: React.FC = () => {
                                 void sendMessage();
                             }
                         }}
-                        placeholder={canSend ? 'Ask Green-Genie for joule-saving refactors...' : 'Run analysis and load source code first...'}
+                        placeholder={canSend ? 'Ask Green-Genie to refactor hotspots...' : 'Run analysis first...'}
                         disabled={!canSend || isStreaming}
-                        className="flex-1 bg-transparent text-xs text-gray-50 placeholder-gray-500 px-2 outline-none font-mono"
+                        className="flex-1 bg-transparent text-[14px] text-slate-800 placeholder-slate-400 px-3 outline-none"
                     />
                     <button
                         onClick={() => {
                             void sendMessage();
                         }}
                         disabled={!canSend || !input.trim() || isStreaming}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-40 bg-amber-100 border border-amber-200 text-amber-600 hover:bg-amber-200"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:bg-slate-200 disabled:text-slate-400 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 active:scale-95"
                     >
-                        <Send size={12} />
+                        <Send size={16} className="-ml-0.5" />
                     </button>
                 </div>
             </div>

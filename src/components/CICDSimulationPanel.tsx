@@ -11,10 +11,10 @@ export const CICDSimulationPanel: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">CI/CD Pipeline Gate</span>
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing border-b border-slate-200/80 bg-slate-50/80 px-5 py-3.5 flex items-center justify-between">
+                <span className="panel-title font-semibold text-[14px]">CI/CD Pipeline Gate</span>
             </div>
-            <div className="flex-1 p-4 overflow-auto font-mono text-xs">
+            <div className="flex-1 p-4 overflow-auto font-mono text-[13px]">
                 <div className="space-y-4">
                     <div className="p-3 border border-gray-50/40 rounded-lg bg-gray-50 flex items-center gap-3">
                         <PlayCircle className="text-indigo-600" size={18} />

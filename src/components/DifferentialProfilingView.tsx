@@ -28,12 +28,12 @@ export const DifferentialProfilingView: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none flex justify-between items-center pr-3">
-                <span className="panel-title">History / Baseline Tracker</span>
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing border-b border-slate-200/80 bg-slate-50/80 px-5 py-3.5 flex items-center justify-between">
+                <span className="panel-title font-semibold text-[14px]">History / Baseline Tracker</span>
                 {isRunning && (
                     <button 
                         onClick={handleSetBaseline}
-                        className="text-[10px] px-2 py-1 rounded bg-indigo-600 text-white font-bold hover:bg-indigo-600/80 transition-colors"
+                        className="text-[11px] px-2 py-1 rounded bg-indigo-600 text-white font-bold hover:bg-indigo-600/80 transition-colors"
                     >
                         Set as Baseline
                     </button>
@@ -72,12 +72,12 @@ export const DifferentialProfilingView: React.FC = () => {
                                 <p className="text-gray-500">No baseline set. Click "Set as Baseline" above.</p>
                             )}
                         </div>
-                        <div className="text-xs text-gray-500 mt-6 leading-relaxed">
+                        <div className="text-[13px] text-gray-500 mt-6 leading-relaxed">
                             * Note: The History/Baseline tracker evaluates the current static AST compilation against a saved snapshot to analyze energy consumption improvements (or degradations) across code changes.
                         </div>
                     </div>
                 ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-gray-500 font-mono">
+                    <div className="h-full flex items-center justify-center text-[13px] text-gray-500 font-mono">
                         Run analysis to view baseline comparisons
                     </div>
                 )}

@@ -225,12 +225,12 @@ export const SunburstProfiler: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">Sunburst Profiler</span>
-                <span className="text-[10px] font-mono text-gray-500">AST NodeType {'->'} Line {'->'} Joules</span>
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing border-b border-slate-200/80 bg-slate-50/80 px-5 py-3.5 flex items-center justify-between">
+                <span className="panel-title font-semibold text-[14px]">Sunburst Profiler</span>
+                <span className="text-[11px] font-mono text-gray-500">AST NodeType {'->'} Line {'->'} Joules</span>
             </div>
 
-            <div className="flex-none px-3 py-1 flex items-center gap-1 text-xs font-mono text-gray-500 border-b border-gray-50/30 min-h-[25px]">
+            <div className="flex-none px-3 py-1 flex items-center gap-1 text-[13px] font-mono text-gray-500 border-b border-gray-50/30 min-h-[25px]">
                 {breadcrumb.length > 0
                     ? breadcrumb.map((name, index) => (
                         <React.Fragment key={`${name}-${index}`}>
@@ -247,7 +247,7 @@ export const SunburstProfiler: React.FC = () => {
                         <div className="w-2/3 max-w-sm space-y-2">
                             <div className="h-3 rounded bg-gray-50 animate-pulse" />
                             <div className="h-3 rounded bg-gray-50 animate-pulse w-10/12" />
-                            <p className="text-center text-xs font-mono text-indigo-600">Compiling AST hierarchy for sunburst...</p>
+                            <p className="text-center text-[13px] font-mono text-indigo-600">Compiling AST hierarchy for sunburst...</p>
                         </div>
                     </div>
                 )}
@@ -258,7 +258,7 @@ export const SunburstProfiler: React.FC = () => {
                         transition={{ duration: 2, repeat: Infinity }}
                         className="text-gray-500 text-sm font-mono text-center absolute"
                     >
-                        <div className="text-xs">Run analysis to render the AST energy hierarchy</div>
+                        <div className="text-[13px]">Run analysis to render the AST energy hierarchy</div>
                     </motion.div>
                 ) : (
                     <motion.div

@@ -226,9 +226,9 @@ export const EnergyFlameGraph: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">Energy Flame Graph</span>
-                <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing border-b border-slate-200/80 bg-slate-50/80 px-5 py-3.5 flex items-center justify-between">
+                <span className="panel-title font-semibold text-[14px]">Energy Flame Graph</span>
+                <div className="flex items-center gap-2 text-[13px] text-gray-500 font-mono">
                     <span>Width: Joule share</span>
                     <span>|</span>
                     <span>Rows: Big-O class</span>
@@ -242,7 +242,7 @@ export const EnergyFlameGraph: React.FC = () => {
                             <div className="h-3 rounded bg-gray-50 animate-pulse" />
                             <div className="h-3 rounded bg-gray-50 animate-pulse" />
                             <div className="h-3 rounded bg-gray-50 animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-indigo-600">Building semantic energy flame map...</p>
+                            <p className="text-center text-[13px] font-mono text-indigo-600">Building semantic energy flame map...</p>
                         </div>
                     </div>
                 )}

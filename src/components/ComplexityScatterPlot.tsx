@@ -197,9 +197,9 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            <div className="panel-header flex-none">
-                <span className="panel-title">Energy-Complexity Scatter</span>
-                <span className="text-[10px] font-mono text-gray-500">X: overall Big-O � Y: total Joules</span>
+            <div className="panel-header drag-handle cursor-grab active:cursor-grabbing border-b border-slate-200/80 bg-slate-50/80 px-5 py-3.5 flex items-center justify-between">
+                <span className="panel-title font-semibold text-[14px]">Energy-Complexity Scatter</span>
+                <span className="text-[11px] font-mono text-gray-500">X: overall Big-O � Y: total Joules</span>
             </div>
 
             <div ref={containerRef} className="flex-1 relative overflow-hidden">
@@ -208,7 +208,7 @@ export const ComplexityScatterPlot: React.FC = React.memo(() => {
                         <div className="w-2/3 max-w-sm space-y-2">
                             <div className="h-3 rounded bg-gray-50 animate-pulse" />
                             <div className="h-3 rounded bg-gray-50 animate-pulse w-5/6" />
-                            <p className="text-center text-xs font-mono text-indigo-600">Computing complexity-energy projection...</p>
+                            <p className="text-center text-[13px] font-mono text-indigo-600">Computing complexity-energy projection...</p>
                         </div>
                     </div>
                 )}

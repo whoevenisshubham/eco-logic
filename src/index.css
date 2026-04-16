@@ -37,14 +37,14 @@ html, body, #root {
 
 /* ─── Panel & UI Components ───────────────────────────────────────────── */
 @layer components {
-  .glass-panel { @apply bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm rounded-xl overflow-hidden flex flex-col; }
+  .glass-panel { @apply bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-2xl overflow-hidden flex flex-col; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02); }
   
-  .glass-panel-bright { @apply bg-white backdrop-blur-lg border border-indigo-100 shadow-md rounded-xl overflow-hidden flex flex-col; }
+  .glass-panel-bright { @apply bg-white backdrop-blur-xl border border-indigo-100/60 rounded-2xl overflow-hidden flex flex-col; box-shadow: 0 8px 30px rgba(99, 102, 241, 0.05), 0 2px 5px rgba(99, 102, 241, 0.03); }
   
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border;
-    @apply border-blue-200 text-blue-600 bg-blue-50;
-    @apply hover:bg-blue-100 hover:border-blue-300;
+    @apply px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 border;
+    @apply border-indigo-200 text-indigo-600 bg-indigo-50 outline-none;
+    @apply hover:bg-indigo-100 hover:border-indigo-300;
     @apply active:scale-95;
   }
 
@@ -61,21 +61,21 @@ html, body, #root {
   }
 
   .cyber-badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
-    @apply border border-blue-200 text-blue-700 bg-blue-50;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-semibold tracking-wide;
+    @apply border border-indigo-100 text-indigo-700 bg-indigo-50/80;
   }
 
-  .energy-low { @apply text-emerald-600; }
-  .energy-medium { @apply text-amber-500; }
-  .energy-high { @apply text-orange-500; }
-  .energy-critical { @apply text-red-500; }
+  .energy-low { @apply text-emerald-600 font-semibold; }
+  .energy-medium { @apply text-amber-600 font-semibold; }
+  .energy-high { @apply text-orange-600 font-semibold; }
+  .energy-critical { @apply text-rose-600 font-semibold; }
 
   .stat-card {
-    @apply glass-panel p-4 flex flex-col gap-2;
+    @apply glass-panel p-5 flex flex-col gap-2.5;
   }
 
   .panel-header {
-    @apply px-4 py-3 flex items-center justify-between border-b border-slate-100;
+    @apply px-5 py-3.5 flex items-center justify-between border-b border-slate-100/80 bg-slate-50/50;
   }
 
   .panel-title {
@@ -84,10 +84,10 @@ html, body, #root {
 }
 
 /* ─── Scrollbar Styling ──────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; border: 2px solid transparent; background-clip: padding-box; }
 
 /* ─── Monaco Decorations ─────────────────────────────────────────────── */
 .heatmap-line-low {
@@ -156,18 +156,43 @@ html, body, #root {
 
 /* ─── D3 Chart Styles ────────────────────────────────────────────────── */
 .d3-tooltip {
-  position: fixed;
+  position: absolute;
   pointer-events: none;
-  background: rgba(8, 15, 26, 0.95);
-  border: 1px solid rgba(0, 212, 255, 0.4);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  color: #e8f4f8;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #334155;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -5px rgba(0, 0, 0, 0.02);
   z-index: 9999;
-  max-width: 220px;
+  min-width: 180px;
+  transform: translate(-50%, -100%);
+  margin-top: -12px;
+  transition: opacity 0.1s;
+}
+.d3-tooltip .tooltip-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.d3-tooltip .tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.d3-tooltip .tooltip-label {
+  color: #64748b;
 }
 
 /* ─── Loading / Pulse ────────────────────────────────────────────────── */
